@@ -2,7 +2,6 @@
     <div class="PlayButton">
         <div class="buttons" v-show="!startState">
           <el-button type="success" round @click.native="action('ready')">{{isreadyMe ? '已准备' : '准备'}}</el-button>
-          <!-- <el-button class="button" @click="action('ready')">{{isreadyMe ? '已准备' : '准备'}}</el-button> -->
         </div>
         <div class="buttons" v-show="startState && !special && isCanPlay && token === 'me'">
           <el-button type="success" round @click="action('pass')">不出</el-button>
@@ -23,7 +22,7 @@
 <script>
 export default {
   name: 'PlayButton',
-  props: ["startState","isreadyMe","special","isCanPlay","token","showCall","showRob"],
+  props: ["special","isCanPlay","token","showCall","showRob"],
   methods: {
     action(type,point){
       let actions = ''
@@ -41,6 +40,14 @@ export default {
     },
     play(){
         this.$emit('play')
+    }
+  },
+  computed: {
+    isreadyMe () {
+      return this.$store.state.isready['me']
+    },
+    startState () {
+      return this.$store.state.startState
     }
   }
 }

@@ -18,10 +18,7 @@ export default {
   name: 'Uinfo',
   props: {
     alarm: [Object,String,Number],
-    startState: Boolean,
-    isready: Boolean,
-    type: String,
-    nickname: [String,Number]
+    type: String
   },
   data () {
     return {
@@ -36,7 +33,15 @@ export default {
     }
   },
   computed: {
-
+    isready () {
+      return this.$store.state.isready[this.type]
+    },
+    nickname () {
+      return this.$store.state.nickname[this.type]
+    },
+    startState () {
+      return this.$store.state.startState
+    }
   }
 }
 </script>

@@ -3,7 +3,7 @@
     <div class="main">
       <div class="main-top">
         <div class="main-top-left">
-          <div class="card-recorder" v-show="startState">
+          <div class="card-recorder" v-show="this.$store.state.startState">
             <span>{{cardsLeft.length}}</span>
           </div>
             <!-- 已出牌区域 左边-->
@@ -18,11 +18,11 @@
             <div class="clear"></div>
           </div>
 
-          <uinfo :alarm='alarm.left' :startState='startState' :isready='isreadyLeft' :nickname='nicknameLeft' type="left"></uinfo>
+          <uinfo :alarm='alarm.left' type="left"></uinfo>
           
         </div>
         <div class="main-top-right">
-          <div class="card-recorder" v-show="startState">
+          <div class="card-recorder" v-show="this.$store.state.startState">
             <span>{{cardsRight.length}}</span>
           </div>
           <!-- 已出牌区域 右边-->
@@ -37,13 +37,13 @@
             <div class="clear"></div>
           </div>
 
-          <uinfo :alarm='alarm.right' :startState='startState' :isready='isreadyRight' :nickname='nicknameRight' type="right"></uinfo>
+          <uinfo :alarm='alarm.right' type="right"></uinfo>
           
         </div>
       </div>
       <div class="main-bottom">
 
-        <uinfo :alarm='alarm.me' :startState='startState' :isready='isreadyMe' :nickname='nicknameMe' type="me"></uinfo>
+        <uinfo :alarm='alarm.me' type="me"></uinfo>
         
         <!-- 已出牌区域 自己-->
         <div class="cards history">
@@ -52,7 +52,7 @@
         <div :class="['msg', message.me ? 'say' : 'none']">
            <span>{{message.me}}</span>
         </div>
-        <play-button :startState="startState" :isreadyMe="isreadyMe" :special="special" :isCanPlay="isCanPlay" :token="token" :showCall="showCall" :showRob="showRob" @childSend="childSend" @play="play"></play-button>
+        <play-button :special="special" :isCanPlay="isCanPlay" :token="token" :showCall="showCall" :showRob="showRob" @childSend="childSend" @play="play"></play-button>
         <div class="cards cards-height">
           <card class="card big" @mousemove.native.stop="mousemove(item)" @mouseup.native.stop="mouseup(item)"  @mousedown.native.stop="mousedown(item)" :style="{'margin-top': item.checked ? '-40px' : '0px'}" v-for="(item, i) in cardsMe" :value="item.label" :key="i" :type="item.type" @click.native.stop="changed(item)"></card>
           <div class="clear"></div>
@@ -84,7 +84,6 @@ export default {
       moveChange: false,
       open: false,
       special: false,
-      startState: false,
       showCall: false,
       showRob: false,
       isCanPlay: false,
@@ -113,12 +112,6 @@ export default {
         '3': 'diamond',
         '4': 'club'
       },
-      nicknameLeft: '',
-      nicknameRight: '',
-      nicknameMe: '',
-      isreadyLeft: false,
-      isreadyRight: false,
-      isreadyMe: false,
       curCard: [],
       meSeatno: '',
       clock: 0,
@@ -214,15 +207,15 @@ export default {
             if(data.uid !== 1){
               if(data.seat_no === this.meSeatno + 1 || data.seat_no === this.meSeatno - 2){
                 seatMap.right = data.uid
-                this.nicknameRight = data.nickname
+                this.$store.commit('setNickname',['right',data.nickname])
               }else{
                 seatMap.left = data.uid
-                this.nicknameLeft = data.nickname
+                this.$store.commit('setNickname',['left',data.nickname])
               }
             }else{
               seatMap.me = data.uid
               this.meSeatno = data.seat_no
-              this.nicknameMe = data.nickname
+              this.$store.commit('setNickname',['me',data.nickname])
             }
             sessionStorage.seat_map = JSON.stringify(seatMap)
             break;
@@ -232,14 +225,13 @@ export default {
             seatMap = JSON.parse(sessionStorage.seat_map)
             for (let key in seatMap){
               if(key==='me' && seatMap[key]===data.uid){
-                this.isreadyMe = true
+                this.$store.commit('setReady',['me',true])
               }else if(key==='left' && seatMap[key]===data.uid){
-                this.isreadyLeft = true
+                this.$store.commit('setReady',['left',true])
               }else if(key==='right' && seatMap[key]===data.uid){
-                this.isreadyRight = true
+                this.$store.commit('setReady',['right',true])
               }
             }
-            this.isready = true
             break;
           case 'deal':
             console.log('发牌了')
@@ -330,7 +322,7 @@ export default {
           this.deal()
         },100)
       }else{
-        this.startState = true
+        this.$store.commit('setStartState',true)
       }
     },
     play () {
