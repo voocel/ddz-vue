@@ -53,8 +53,15 @@
            <span>{{message.me}}</span>
         </div>
         <play-button :special="special" :isCanPlay="isCanPlay" :token="token" :showCall="showCall" :showRob="showRob" @childSend="childSend" @play="play"></play-button>
-        <div class="cards cards-height">
-          <card class="card big" @mousemove.native.stop="mousemove(item)" @mouseup.native.stop="mouseup(item)"  @mousedown.native.stop="mousedown(item)" :style="{'margin-top': item.checked ? '-40px' : '0px'}" v-for="(item, i) in cardsMe" :value="item.label" :key="i" :type="item.type" @click.native.stop="changed(item)"></card>
+        <div class="cards cards-height" v-clickoutside="putdownAllCards">
+          <card class="card big" 
+            @mousemove.native.stop="mousemove(item)" 
+            @mouseup.native.stop="mouseup(item)"  
+            @mousedown.native.stop="mousedown(item)" 
+            :style="{'transform': item.checked ? 'translate3d(0, -40px, 0)' : '','transition': item.checked ? 'transform 0.08s linear 0s' : 'transform 0.18s linear 0s'}" 
+            v-for="(item, i) in cardsMe" :value="item.label" :key="i" :type="item.type" 
+            @click.native.stop="changed(item)">
+          </card>
           <div class="clear"></div>
         </div>
       </div>
@@ -74,6 +81,7 @@ import fade from './components/Fade'
 import poker from '@/utils/poker'
 import auth from '@/utils/auth'
 import appConfig from '@/config/app'
+import clickoutside from '@/directive/clickoutside';
 
 export default {
   name: 'Room',
@@ -82,6 +90,7 @@ export default {
       websocket: null,
       first: false,
       moveChange: false,
+      clickLock: false,
       open: false,
       special: false,
       showCall: false,
@@ -125,6 +134,7 @@ export default {
     fade,
     playButton
   },
+  directives: {clickoutside},
   created () {
     window.addEventListener('resize', this.handleResize)
     this.initWebSocket();
@@ -157,9 +167,6 @@ export default {
   computed: {
   },
   methods: {
-    childSend (res){
-      this.wsSend(res);
-    },
     initWebSocket () { //初始化weosocket
         const wsurl = "ws://" + appConfig.socket_url + ':' + appConfig.socket_port;
         this.websocket = new WebSocket(wsurl);
@@ -295,12 +302,17 @@ export default {
     wsSend (msg) {
       this.websocket.send(msg);
     },
+    childSend (res){
+      this.wsSend(res);
+    },
     mousedown (event) {
       this.moveChange = true
       this.first = !event.checked
     },
     mousemove (event) {
+      this.clickLock = false
       if (this.moveChange) {
+        this.clickLock = true
         this.cardsMe.find(c => c.label === event.label && c.type === event.type).checked = this.first
       }
     },
@@ -390,7 +402,10 @@ export default {
       this.fullHeight = document.documentElement.clientHeight
     },
     changed (item) {
-      item.checked = !item.checked
+      if(!this.clickLock) item.checked = !item.checked
+    },
+    putdownAllCards(e) {
+      this.cardsMe.forEach(h => {h.checked = false})
     },
     _addLandlordCards(uid,remainCards){
       let token = auth.getTokenByUid(uid)
