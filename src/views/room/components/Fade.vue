@@ -14,8 +14,8 @@
 export default {
   name: 'Fade',
   props: {
-      special: Boolean,
-      specialType: Number
+    special: Boolean,
+    specialType: Number
   }
 }
 </script>

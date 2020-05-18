@@ -22,24 +22,24 @@
 <script>
 export default {
   name: 'PlayButton',
-  props: ["special","isCanPlay","token","showCall","showRob"],
+  props: ['special', 'isCanPlay', 'token', 'showCall', 'showRob'],
   methods: {
-    action(type,point){
+    action (type, point) {
       let actions = ''
       switch (type) {
         case 'ready':
         case 'pass':
-          actions = {"cmd":"ddz/"+type,"param":{"room_no":1000,"grade":"simple"},"access_token":"123"};
-          break;
+          actions = {'cmd': 'ddz/' + type, 'param': {'room_no': 1000, 'grade': 'simple'}, 'access_token': '123'}
+          break
         case 'call':
         case 'rob':
-          actions = {"cmd":"ddz/"+type,"param":{"room_no":1000,"grade":"simple",'point':point},"access_token":"123"};
-          break;
+          actions = {'cmd': 'ddz/' + type, 'param': {'room_no': 1000, 'grade': 'simple', 'point': point}, 'access_token': '123'}
+          break
       }
-      this.$emit('childSend',JSON.stringify(actions))
+      this.$emit('childSend', JSON.stringify(actions))
     },
-    play(){
-        this.$emit('play')
+    play () {
+      this.$emit('play')
     }
   },
   computed: {

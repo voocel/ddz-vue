@@ -21,19 +21,19 @@ export default {
     }
   },
   methods: {
-    test(a,b){
+    test (a, b) {
       this.$message({
-          showClose: true,
-          message: '请选择需要出的牌！',
-          type: 'warning',
-          duration:3000
-        })
+        showClose: true,
+        message: '请选择需要出的牌！',
+        type: 'warning',
+        duration: 3000
+      })
       // let cardsNum = [1,1,1,1,2,2,2,2]
       // let res = this._checkThreeLine(cardsNum,cardsNum.length)
       let num = ['3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A', '2']
-      let x = num.findIndex(n => n == 3)
+      let x = num.findIndex(n => n === 3)
       console.log(x)
-    },
+    }
   },
   computed: {
 

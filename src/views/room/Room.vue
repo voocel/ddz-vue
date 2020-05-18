@@ -19,7 +19,7 @@
           </div>
 
           <uinfo :alarm='alarm.left' type="left"></uinfo>
-          
+
         </div>
         <div class="main-top-right">
           <div class="card-recorder" v-show="this.$store.state.startState">
@@ -38,13 +38,13 @@
           </div>
 
           <uinfo :alarm='alarm.right' type="right"></uinfo>
-          
+
         </div>
       </div>
       <div class="main-bottom">
 
         <uinfo :alarm='alarm.me' type="me"></uinfo>
-        
+
         <!-- 已出牌区域 自己-->
         <div class="cards history">
           <card class="card small" size="small" v-for="(item, i) in historyMe" :value="item.label" :key="i" :type="item.type"></card>
@@ -54,19 +54,19 @@
         </div>
         <play-button :special="special" :isCanPlay="isCanPlay" :token="token" :showCall="showCall" :showRob="showRob" @childSend="childSend" @play="play"></play-button>
         <div class="cards cards-height" v-clickoutside="putdownAllCards">
-          <card class="card big" 
-            @mousemove.native.stop="mousemove(item)" 
-            @mouseup.native.stop="mouseup(item)"  
-            @mousedown.native.stop="mousedown(item)" 
-            :style="{'transform': item.checked ? 'translate3d(0, -40px, 0)' : '','transition': item.checked ? 'transform 0.08s linear 0s' : 'transform 0.18s linear 0s'}" 
-            v-for="(item, i) in cardsMe" :value="item.label" :key="i" :type="item.type" 
+          <card class="card big"
+            @mousemove.native.stop="mousemove(item)"
+            @mouseup.native.stop="mouseup(item)"
+            @mousedown.native.stop="mousedown(item)"
+            :style="{'transform': item.checked ? 'translate3d(0, -40px, 0)' : '','transition': item.checked ? 'transform 0.08s linear 0s' : 'transform 0.18s linear 0s'}"
+            v-for="(item, i) in cardsMe" :value="item.label" :key="i" :type="item.type"
             @click.native.stop="changed(item)">
           </card>
           <div class="clear"></div>
         </div>
       </div>
     </div>
-    
+
     <fade :specialType="specialType" :special="special"></fade>
     <setting></setting>
   </div>
@@ -81,7 +81,7 @@ import fade from './components/Fade'
 import poker from '@/utils/poker'
 import auth from '@/utils/auth'
 import appConfig from '@/config/app'
-import clickoutside from '@/directive/clickoutside';
+import clickoutside from '@/directive/clickoutside'
 
 export default {
   name: 'Room',
@@ -137,10 +137,10 @@ export default {
   directives: {clickoutside},
   created () {
     window.addEventListener('resize', this.handleResize)
-    this.initWebSocket();
+    this.initWebSocket()
   },
-  destroyed() {
-    this.websocket.close() //离开路由之后断开websocket连接
+  destroyed () {
+    this.websocket.close() // 离开路由之后断开websocket连接
   },
   watch: {
     token (token, historytoken) {
@@ -167,79 +167,77 @@ export default {
   computed: {
   },
   methods: {
-    initWebSocket () { //初始化weosocket
-        const wsurl = "ws://" + appConfig.socket_url + ':' + appConfig.socket_port;
-        this.websocket = new WebSocket(wsurl);
-        this.websocket.onmessage = this.onMessage;
-        this.websocket.onopen = this.onOpen;
-        this.websocket.onerror = this.onError;
-        this.websocket.onclose = this.onClose;
+    initWebSocket () { // 初始化weosocket
+      const wsurl = 'ws://' + appConfig.socket_url + ':' + appConfig.socket_port
+      this.websocket = new WebSocket(wsurl)
+      this.websocket.onmessage = this.onMessage
+      this.websocket.onopen = this.onOpen
+      this.websocket.onerror = this.onError
+      this.websocket.onclose = this.onClose
     },
     onOpen () {
-      let actions = {"cmd":"ddz/enterRoom","param":{"room_no":1000,"grade":"simple"},"access_token":"123"};
-      this.wsSend(JSON.stringify(actions));
+      let actions = {'cmd': 'ddz/enterRoom', 'param': {'room_no': 1000, 'grade': 'simple'}, 'access_token': '123'}
+      this.wsSend(JSON.stringify(actions))
     },
     onError () {
-      this.initWebSocket();
+      this.initWebSocket()
     },
     onMessage (e) {
-      const res = JSON.parse(e.data);
+      const res = JSON.parse(e.data)
 
-      if(res.code === 200) {
+      if (res.code === 200) {
         let data = res.data.result
         switch (res.data.type) {
           case 'room_info':
-            break;
+            break
           case 'player_info':
-            if(sessionStorage.player_info == undefined){
-              var playerInfo = []
-            }else{
-              var playerInfo = JSON.parse(sessionStorage.player_info)
+            let playerInfo = []
+            if (sessionStorage.player_info !== undefined) {
+              playerInfo = JSON.parse(sessionStorage.player_info)
             }
             var isInRoom = false
-            for(let i=0; i<playerInfo.length; i++){
-              if(playerInfo[i].uid === data.uid){
+            for (let i = 0; i < playerInfo.length; i++) {
+              if (playerInfo[i].uid === data.uid) {
                 isInRoom = true
-                playerInfo.splice(i,1,data)
+                playerInfo.splice(i, 1, data)
               }
             }
-            if(!isInRoom) playerInfo.push(data)
-            
+            if (!isInRoom) playerInfo.push(data)
+
             sessionStorage.player_info = JSON.stringify(playerInfo)
-            if(sessionStorage.seat_map == undefined){
-              var seatMap = {}
-            }else{
-              var seatMap = JSON.parse(sessionStorage.seat_map)
+            let seatMap = {}
+            if (sessionStorage.seat_map !== undefined) {
+              seatMap = JSON.parse(sessionStorage.seat_map)
             }
-            if(data.uid !== 1){
-              if(data.seat_no === this.meSeatno + 1 || data.seat_no === this.meSeatno - 2){
+            if (data.uid !== 1) {
+              if (data.seat_no === this.meSeatno + 1 || data.seat_no === this.meSeatno - 2) {
                 seatMap.right = data.uid
-                this.$store.commit('setNickname',['right',data.nickname])
-              }else{
+                this.$store.commit('setNickname', ['right', data.nickname])
+              } else {
                 seatMap.left = data.uid
-                this.$store.commit('setNickname',['left',data.nickname])
+                this.$store.commit('setNickname', ['left', data.nickname])
               }
-            }else{
+            } else {
               seatMap.me = data.uid
               this.meSeatno = data.seat_no
-              this.$store.commit('setNickname',['me',data.nickname])
+              this.$store.commit('setNickname', ['me', data.nickname])
             }
             sessionStorage.seat_map = JSON.stringify(seatMap)
-            break;
+            break
           case 'ready':
             console.log(data)
             console.log(Date.parse(new Date()))
             seatMap = JSON.parse(sessionStorage.seat_map)
-            for (let key in seatMap){
-              if(key==='me' && seatMap[key]===data.uid){
-                this.$store.commit('setReady',['me',true])
-              }else if(key==='left' && seatMap[key]===data.uid){
-                this.$store.commit('setReady',['left',true])
-              }else if(key==='right' && seatMap[key]===data.uid){
-                this.$store.commit('setReady',['right',true])
+            for (let key in seatMap) {
+              if (key === 'me' && seatMap[key] === data.uid) {
+                this.$store.commit('setReady', ['me', true])
+              } else if (key === 'left' && seatMap[key] === data.uid) {
+                this.$store.commit('setReady', ['left', true])
+              } else if (key === 'right' && seatMap[key] === data.uid) {
+                this.$store.commit('setReady', ['right', true])
               }
             }
-            break;
+            break
           case 'deal':
             console.log('发牌了')
             this.curCard = data.player_hand_cards.reverse()
@@ -247,21 +245,21 @@ export default {
             this.cardsLeft = []
             this.cardsRight = []
             this.deal()
-            break;
+            break
           case 'call':
-            let curCallUid = data.cur_call_uid  // 当前发送叫或不叫地主消息的玩家
-            let nextCallUid = data.next_call_uid   // 下一个该叫地主的玩家 如果该值为空这表明叫地主一轮结束了,没有下一个了
-            this._setAlarm(data.cur_call_point,curCallUid,nextCallUid,'call')
-            break;
+            let curCallUid = data.cur_call_uid // 当前发送叫或不叫地主消息的玩家
+            let nextCallUid = data.next_call_uid // 下一个该叫地主的玩家 如果该值为空这表明叫地主一轮结束了,没有下一个了
+            this._setAlarm(data.cur_call_point, curCallUid, nextCallUid, 'call')
+            break
           case 'rob':
             let curRobUid = data.cur_rob_uid
             let nextRobUid = data.next_rob_uid
             this.showCall = false
             this.showRob = true
-            this._setAlarm(data.cur_rob_point,curRobUid,nextRobUid,'rob')
-            break;
+            this._setAlarm(data.cur_rob_point, curRobUid, nextRobUid, 'rob')
+            break
           case 'is_can_play':
-            console.log("is_can_play")
+            console.log('is_can_play')
             console.log(data)
             this.token = auth.getTokenByUid(data.cur_uid)
             this.showCall = false
@@ -271,25 +269,25 @@ export default {
             this.alarm['right'] = 0
             this.alarm['left'] = 0
             this.landlordUid = data.cur_uid
-            this._addLandlordCards(data.cur_uid,data.remain_card)
-            break;
+            this._addLandlordCards(data.cur_uid, data.remain_card)
+            break
           case 'play':
             console.log(data)
             this.showCard(data.cbCard)
-            break;
+            break
           case 'pass':
             console.log(data)
             this.showPass(data)
-            break;
+            break
           case 'end':
-            console.log("本局结束")
+            console.log('本局结束')
             console.log(data)
             this.showSpecial(1)
-            break;
+            break
           default:
-            break;
+            break
         }
-      }else{
+      } else {
         this.message[this.token] = res.message
         setTimeout(() => {
           this.message[this.token] = ''
@@ -297,13 +295,13 @@ export default {
       }
     },
     onClose (e) {
-      console.log('断开连接', e);
+      console.log('断开连接', e)
     },
     wsSend (msg) {
-      this.websocket.send(msg);
+      this.websocket.send(msg)
     },
-    childSend (res){
-      this.wsSend(res);
+    childSend (res) {
+      this.wsSend(res)
     },
     mousedown (event) {
       this.moveChange = true
@@ -329,12 +327,12 @@ export default {
     deal () {
       let ccard = this.curCard.pop()
       this._add(ccard)
-      if(this.curCard.length > 0) {
-        setTimeout(()=>{
+      if (this.curCard.length > 0) {
+        setTimeout(() => {
           this.deal()
-        },100)
-      }else{
-        this.$store.commit('setStartState',true)
+        }, 100)
+      } else {
+        this.$store.commit('setStartState', true)
       }
     },
     play () {
@@ -352,22 +350,20 @@ export default {
         this.showSpecial(1)
       }
       this.token = 'me'
-      this.message.right = '' 
+      this.message.right = ''
       this.message.left = ''
     },
     showCard (data) {
-      let obj = []
-      let history = []
       let next = ''
-      if(this.token === 'me'){
+      if (this.token === 'me') {
         next = 'right'
-        this._addHistoryCard(data,this.historyMe,this.cardsMe,'me')
-      }else if(this.token === 'left'){
+        this._addHistoryCard(data, this.historyMe, this.cardsMe, 'me')
+      } else if (this.token === 'left') {
         next = 'me'
-        this._addHistoryCard(data,this.historyLeft,this.cardsLeft,'left')
-      }else{
+        this._addHistoryCard(data, this.historyLeft, this.cardsLeft, 'left')
+      } else {
         next = 'left'
-        this._addHistoryCard(data,this.historyRight,this.cardsRight,'right')
+        this._addHistoryCard(data, this.historyRight, this.cardsRight, 'right')
       }
       this.token = next
     },
@@ -375,26 +371,26 @@ export default {
       let next = ''
       let seatMap = JSON.parse(sessionStorage.seat_map)
       for (let index in seatMap) {
-        if(seatMap[index] === data.cbCard_uid){
+        if (seatMap[index] === data.cbCard_uid) {
           this.token = index
         }
       }
       this.message[this.token] = '要不起'
-      if(this.token === 'me'){
+      if (this.token === 'me') {
         next = 'right'
-        setTimeout(()=>{
+        setTimeout(() => {
           this.message['me'] = ''
-        },1000)
-      }else if(this.token === 'left'){
+        }, 1000)
+      } else if (this.token === 'left') {
         next = 'me'
-        setTimeout(()=>{
+        setTimeout(() => {
           this.message['left'] = ''
-        },1000)
-      }else{
+        }, 1000)
+      } else {
         next = 'left'
-        setTimeout(()=>{
+        setTimeout(() => {
           this.message['right'] = ''
-        },1000)
+        }, 1000)
       }
       this.token = next
     },
@@ -402,29 +398,29 @@ export default {
       this.fullHeight = document.documentElement.clientHeight
     },
     changed (item) {
-      if(!this.clickLock) item.checked = !item.checked
+      if (!this.clickLock) item.checked = !item.checked
     },
-    putdownAllCards(e) {
-      this.cardsMe.forEach(h => {h.checked = false})
+    putdownAllCards (e) {
+      this.cardsMe.forEach(h => { h.checked = false })
     },
-    _addLandlordCards(uid,remainCards){
+    _addLandlordCards (uid, remainCards) {
       let token = auth.getTokenByUid(uid)
       remainCards.forEach(h => {
-        if(token === 'me'){
+        if (token === 'me') {
           let tmp = h.split('x')
           this.cardsMe.push({
             label: tmp[0],
             type: this.types[tmp[1]],
             checked: false
           })
-        }else if(token === 'right'){
+        } else if (token === 'right') {
           let tmp = h.split('x')
           this.cardsRight.push({
             label: tmp[0],
             type: this.types[tmp[1]],
             checked: false
           })
-        }else{
+        } else {
           let tmp = h.split('x')
           this.cardsLeft.push({
             label: tmp[0],
@@ -435,24 +431,24 @@ export default {
       })
       this.cardsMe = poker.sortCrad(this.cardsMe)
     },
-    _setAlarm(curPoint,curUid,nextUid,type){
+    _setAlarm (curPoint, curUid, nextUid, type) {
       let next = ''
       let seatMap = JSON.parse(sessionStorage.seat_map)
       this.token = auth.getTokenByUid(nextUid)
-      if(curPoint === 0){
-          this.message[auth.getTokenByUid(curUid)] = type==='call'?'不叫':'不抢'
+      if (curPoint === 0) {
+        this.message[auth.getTokenByUid(curUid)] = type === 'call' ? '不叫' : '不抢'
       }
-      if(nextUid !== ''){
-        if(nextUid === seatMap.me){
+      if (nextUid !== '') {
+        if (nextUid === seatMap.me) {
           this.showCall = true
           next = 'right'
           this.alarm['left'] = 0
-        }else if(nextUid === seatMap.right){
+        } else if (nextUid === seatMap.right) {
           this.showCall = false
           this.showRob = false
           next = 'left'
           this.alarm['me'] = 0
-        }else{
+        } else {
           this.showCall = false
           this.showRob = false
           next = 'me'
@@ -461,11 +457,11 @@ export default {
         this.alarm[this.token] = 10
         clearInterval(this.clock)
         let curToken = this.token
-        this.clock = setInterval(()=>{
-          this.alarm[curToken] --
-        },1000)
+        this.clock = setInterval(() => {
+          this.alarm[curToken]--
+        }, 1000)
         this.token = next
-      }else{
+      } else {
         // 要重新发牌了,清空上局残留的闹钟
         this.alarm['me'] = 0
         this.alarm['left'] = 0
@@ -494,44 +490,44 @@ export default {
       })
     },
     _playCard (obj) {
-      console.log("出牌了...")
+      console.log('出牌了...')
       let tmp = []
       tmp.push(...obj.filter(c => c.checked))
       let cbCard = []
-      tmp.forEach (h => {
-        cbCard.push(h.label+'x'+poker.str2num(h.type,this.types))
+      tmp.forEach(h => {
+        cbCard.push(h.label + 'x' + poker.str2num(h.type, this.types))
       })
       let cardsNum = poker.card2num(tmp)
-      cardsNum = cardsNum.sort((a,b) => a-b)
+      cardsNum = cardsNum.sort((a, b) => a - b)
       console.log(cardsNum)
       let cardType = poker.checkType(cardsNum)
-      if(cardType === 'bomb_card') this.showSpecial(0)
+      if (cardType === 'bomb_card') this.showSpecial(0)
       if (!cardType) {
         this.message.me = '错误的牌型~'
-        setTimeout(()=>{
+        setTimeout(() => {
           this.message['me'] = ''
-        },1000)
+        }, 1000)
         return
       }
       cbCard = cbCard.reverse()
-      let actions = {"cmd":"ddz/play","param":{"room_no":1000,"grade":"simple","cbCard":cbCard,'cbCard_type':cardType},"access_token":"123"};
-      this.wsSend(JSON.stringify(actions));
+      let actions = {'cmd': 'ddz/play', 'param': {'room_no': 1000, 'grade': 'simple', 'cbCard': cbCard, 'cbCard_type': cardType}, 'access_token': '123'}
+      this.wsSend(JSON.stringify(actions))
     },
-    _addHistoryCard(data,history,handCards,type){
+    _addHistoryCard (data, history, handCards, type) {
       data.forEach(h => {
         let tmp = h.split('x')
         history.push({
-            label: tmp[0],
-            type: this.types[tmp[1]],
-            checked: true
+          label: tmp[0],
+          type: this.types[tmp[1]],
+          checked: true
         })
       })
       // 同时从手牌删除
-      if(type === 'me'){
+      if (type === 'me') {
         this.historyMe.forEach(h => {
           this.cardsMe.splice(this.cardsMe.findIndex(n => n.label === h.label && n.type === h.type), 1)
         })
-      }else{
+      } else {
         history.forEach(h => {
           handCards.splice(0, 1)
         })

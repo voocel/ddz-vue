@@ -54,7 +54,7 @@ export default {
         case '13':
           tmp = 'K'
           // tmp = '<img src="/static/img/back.a2057e1.png">'
-          break;
+          break
         default:
           tmp = this.value
       }

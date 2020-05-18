@@ -17,7 +17,7 @@
 export default {
   name: 'Uinfo',
   props: {
-    alarm: [Object,String,Number],
+    alarm: [Object, String, Number],
     type: String
   },
   data () {
@@ -25,8 +25,8 @@ export default {
     }
   },
   methods: {
-    getStyle (){
-      if(this.type === 'me'){
+    getStyle () {
+      if (this.type === 'me') {
         return 'position: absolute; left: -150px'
       }
       return 'position: absolute; left: 100px'

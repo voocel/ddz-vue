@@ -11,13 +11,13 @@ export default new Router({
       path: '/',
       name: 'Hall',
       component: Hall,
-      meta: {requiresAuth: false},
+      meta: {requiresAuth: false}
     },
     {
       path: '/room',
       name: 'Room',
       component: Room,
-      meta: {requiresAuth: true},
+      meta: {requiresAuth: true}
     }
   ]
 })
