@@ -2,9 +2,9 @@
   <div class="home">
     <div class="bottom-box">
       <div>
-        <el-input class="room-no" v-model="input" placeholder="请输入房间号"></el-input>
+        <el-input v-model="input" class="room-no" placeholder="请输入房间号" />
       </div>
-      <router-link tag="div" to='/room'>
+      <router-link tag="div" to="/room">
         <el-button type="primary" round>加入房间</el-button>
       </router-link>
     </div>
@@ -14,7 +14,7 @@
 <script>
 export default {
   name: 'Home',
-  data () {
+  data() {
     return {
       input: ''
     }
@@ -27,7 +27,7 @@ export default {
     -moz-user-select: none;
     -khtml-user-select: none;
     user-select: none;
-    background-image: url('../../assets/ddz_bg.jpg');
+    background-image: url('../../assets/images/ddz_bg.jpg');
     width: 100%;
     background-repeat: no-repeat;
     background-size: 100% 100%;

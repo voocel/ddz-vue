@@ -7,13 +7,13 @@ export default {
    @param binding {Object}
    @param vnode vue编译生成的虚拟节点
    */
-  bind (el, binding, vnode) {
-    const documentHandler = function (e) {
-    //   if(!vnode.context ||  e.target.className != 'main-bottom') {
-      if (!vnode.context) {
+  bind(el, binding, vnode) {
+    const documentHandler = function(e) {
+      if (!vnode.context || e.target.localName === 'button' || e.target.localName === 'span') {
+      // if(!vnode.context) {
         return false
       }
-      let bMobile = navigator.userAgent.match(/Android/i) ||
+      const bMobile = navigator.userAgent.match(/Android/i) ||
                 navigator.userAgent.match(/webOS/i) ||
                 navigator.userAgent.match(/iPhone/i) ||
                 navigator.userAgent.match(/iPad/i) ||
@@ -41,11 +41,11 @@ export default {
       document.addEventListener(EVENT_PC, documentHandler, false)
     }, 0)
   },
-  update (el, binding) {
+  update(el, binding) {
     el[HANDLER].methodName = binding.expression
     el[HANDLER].bindingFn = binding.value
   },
-  unbind (el) {
+  unbind(el) {
     document.removeEventListener(EVENT_MOBILE, el[HANDLER].documentHandler, false)
     document.removeEventListener(EVENT_PC, el[HANDLER].documentHandler, false)
   }

@@ -1,5 +1,5 @@
-function analyseSameNum (cards, len) {
-  let res = {
+function analyseSameNum(cards, len) {
+  const res = {
     'singleCount': 0,
     'doubleCount': 0,
     'threeCount': 0,
@@ -11,7 +11,7 @@ function analyseSameNum (cards, len) {
   }
   for (let i = 0; i < len; i++) {
     let cbSameCount = 1
-    let base = cards[i]
+    const base = cards[i]
     for (let j = i + 1; j < len; j++) {
       if (cards[j] !== base) break
       cbSameCount++
@@ -39,9 +39,9 @@ function analyseSameNum (cards, len) {
   return res
 }
 
-function checkType (cards) {
-  let len = cards.length
-  let analyseRes = analyseSameNum(cards, len)
+function checkType(cards) {
+  const len = cards.length
+  const analyseRes = analyseSameNum(cards, len)
   if (len >= 5) {
     if (_checkSingleLine(cards, len)) {
       return 'single_line'
@@ -106,11 +106,11 @@ function checkType (cards) {
   }
 }
 
-function sortCrad (cards) {
+function sortCrad(cards) {
   return cards.sort((a, b) => {
-    let arr = ['3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '1', '2', '0']
-    let x = arr.findIndex(n => n === a.label)
-    let y = arr.findIndex(n => n === b.label)
+    const arr = ['3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '1', '2', '0']
+    const x = arr.findIndex(n => n === a.label)
+    const y = arr.findIndex(n => n === b.label)
     if (x < y) {
       return 1
     } else if (x > y) {
@@ -121,25 +121,25 @@ function sortCrad (cards) {
   })
 }
 
-function card2num (cards) {
-  let res = []
+function card2num(cards) {
+  const res = []
   cards.forEach(h => {
     res.push(h.label)
   })
   return res
 }
 
-function str2num (str, types) {
-  for (let index in types) {
+function str2num(str, types) {
+  for (const index in types) {
     if (types[index] === str) {
       return index
     }
   }
 }
 
-function _checkSingleLine (cards, len) {
+function _checkSingleLine(cards, len) {
   let base = cards[0]
-  let res = [base]
+  const res = [base]
   for (let i = 0; i < len; i++) {
     if (cards[i] - base === 1) {
       base = cards[i]
@@ -149,9 +149,9 @@ function _checkSingleLine (cards, len) {
   return res.length === len
 }
 
-function _checkDoubleLine (cards, len) {
+function _checkDoubleLine(cards, len) {
   if (len < 6) return false
-  let tmp = []
+  const tmp = []
   tmp.push(...new Set(cards))
   if (len === tmp.length * 2) {
     return _checkSingleLine(tmp, tmp.length)
@@ -159,9 +159,9 @@ function _checkDoubleLine (cards, len) {
   return false
 }
 
-function _checkThreeLine (cards, len) {
+function _checkThreeLine(cards, len) {
   if (len < 6) return false
-  let tmp = []
+  const tmp = []
   tmp.push(...new Set(cards))
   if (len === tmp.length * 3) {
     console.log(tmp)

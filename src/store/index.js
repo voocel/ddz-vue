@@ -1,31 +1,15 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import getters from './getters'
+import user from './modules/user'
 
 Vue.use(Vuex)
 
-export default new Vuex.Store({
-  state: {
-    startState: false,
-    isready: {
-      'left': false,
-      'right': false,
-      'me': false
-    },
-    nickname: {
-      'left': '',
-      'right': '',
-      'me': ''
-    }
+const store = new Vuex.Store({
+  modules: {
+    user
   },
-  mutations: {
-    setReady (state, readyInfo) {
-      state.isready[readyInfo[0]] = readyInfo[1]
-    },
-    setNickname (state, nick) {
-      state.nickname[nick[0]] = nick[1]
-    },
-    setStartState (state, status) {
-      state.startState = status
-    }
-  }
+  getters
 })
+
+export default store

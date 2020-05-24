@@ -1,12 +1,24 @@
 <template>
   <div :class="['card', size + '-card']">
-    <div class="nocheck"></div>
-    <div class="back" v-if="!open">
-      <img src="@/assets/back.png">
+    <div class="nocheck" />
+    <div v-if="!open" class="back">
+      <img src="@/assets/images/back.png">
     </div>
-    <div  v-show="open" :class="['card-num-left', size + '-num']" :style="{'color': cardColor}">{{cards}}</div>
-    <div  v-show="open"><img :src="cardType" class="card-type"></div>
-    <div  v-show="open" :class="['card-num-right', size + '-num']" :style="{'color': cardColor}">{{cards}}</div>
+    <div
+      v-show="open"
+      :class="['card-num-left', size + '-num']"
+      :style="{ color: cardColor }"
+    >
+      {{ cards }}
+    </div>
+    <div v-show="open"><img :src="cardType" class="card-type"></div>
+    <div
+      v-show="open"
+      :class="['card-num-right', size + '-num']"
+      :style="{ color: cardColor }"
+    >
+      {{ cards }}
+    </div>
   </div>
 </template>
 
@@ -25,24 +37,23 @@ export default {
       default: true
     }
   },
-  data () {
-    return {
-    }
+  data() {
+    return {}
   },
   computed: {
-    cardType () {
-      return require(`@/assets/${this.type}.png`)
+    cardType() {
+      return require(`@/assets/images/${this.type}.png`)
     },
-    cardColor () {
-      let color = {
-        'heart': '#f00',
-        'diamond': '#f00',
-        'spade': '#000',
-        'club': '#000'
+    cardColor() {
+      const color = {
+        heart: '#f00',
+        diamond: '#f00',
+        spade: '#000',
+        club: '#000'
       }
       return color[this.type]
     },
-    cards () {
+    cards() {
       let tmp = ''
       switch (this.value) {
         case '11':
@@ -115,7 +126,7 @@ export default {
   width: 85%;
   margin: 5%;
   border: 1px dashed rgb(218, 107, 107);
-  background-color: #9999a3
+  background-color: #9999a3;
 }
 .back img {
   width: 100%;
