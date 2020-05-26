@@ -1,5 +1,5 @@
 <template>
-  <div :class="['card', size + '-card']">
+  <div :class="['card', size + '-card']" :style="{ 'z-index': 699+num }">
     <div class="nocheck" />
     <div v-if="!open" class="back">
       <img src="@/assets/images/back.png">
@@ -26,11 +26,21 @@
 export default {
   name: 'Card',
   props: {
-    value: String,
-    type: String,
+    value: {
+      type: String,
+      default: '0'
+    },
+    type: {
+      type: String,
+      default: 'heart'
+    },
     size: {
       type: String,
       default: 'big'
+    },
+    num: {
+      type: Number,
+      default: 100
     },
     open: {
       type: Boolean,
@@ -56,6 +66,9 @@ export default {
     cards() {
       let tmp = ''
       switch (this.value) {
+        case '1':
+          tmp = 'A'
+          break
         case '11':
           tmp = 'J'
           break
@@ -136,6 +149,5 @@ export default {
   position: absolute;
   height: 100%;
   width: 100%;
-  z-index: 999;
 }
 </style>

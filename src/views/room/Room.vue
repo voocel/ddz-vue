@@ -1,256 +1,233 @@
 <template>
-  <div class="desk" :style="{ height: fullHeight + 'px' }">
-    <div class="main">
-      <div class="main-top">
-        <div class="main-top-left">
-          <div v-show="this.$store.state.startState" class="card-recorder">
-            <span>{{ cardsLeft.length }}</span>
+  <div class="container">
+    <el-container>
+      <el-header height="10vh">Header</el-header>
+      <el-container>
+        <el-aside width="20%">
+          <el-row>
+            <el-col :span="12">
+              <user ref="user" :alarm-num="alarm['left']" direction="left" />
+            </el-col>
+            <el-col :span="8">
+              <HandCard :hand-cards="cardsLeft" direction="left" />
+              <!-- <OutCard :out-card="outcardLeft" /> -->
+              <div :class="['left-msg', tip.left ? 'say' : 'none']">
+                <span> {{ tip.left }} </span>
+              </div>
+            </el-col>
+          </el-row>
+        </el-aside>
+        <el-main>
+          <div class="left-outcard">
+            <OutCard :out-card="outcardLeft" />
           </div>
-          <!-- 已出牌区域 左边-->
-          <div class="cards history">
-            <card
-              v-for="(item, i) in historyLeft"
-              :key="i"
-              class="card small"
-              size="small"
-              :value="item.label"
-              :type="item.type"
-            />
+          <div class="right-outcard">
+            <OutCard :out-card="outcardRight" />
           </div>
-          <div :class="['msg', message.left ? 'say' : 'none']">
-            <span>{{ message.left }}</span>
+          <div class="mine-outcard">
+            <OutCard :out-card="outcardMine" />
           </div>
-          <div class="cards other cards-margin-left">
-            <card
-              v-for="(item, i) in cardsLeft"
-              :key="i"
-              class="card small"
-              :open="open"
-              size="small"
-              :style="{ 'margin-top': item.checked ? '-20px' : '0px' }"
-              :value="item.label"
-              :type="item.type"
-              @click.native="changed(item)"
-            />
-            <div class="clear" />
-          </div>
-
-          <uinfo :alarm="alarm.left" type="left" />
-        </div>
-        <div class="main-top-right">
-          <div v-show="this.$store.state.startState" class="card-recorder">
-            <span>{{ cardsRight.length }}</span>
-          </div>
-          <!-- 已出牌区域 右边-->
-          <div class="cards history">
-            <card
-              v-for="(item, i) in historyRight"
-              :key="i"
-              class="card small"
-              size="small"
-              :value="item.label"
-              :type="item.type"
-            />
-          </div>
-          <div :class="['msg', message.right ? 'say' : 'none']">
-            <span>{{ message.right }}</span>
-          </div>
-          <div class="cards other cards-margin-right">
-            <card
-              v-for="(item, i) in cardsRight"
-              :key="i"
-              class="card small"
-              :open="open"
-              size="small"
-              :style="{ 'margin-top': item.checked ? '-20px' : '0px' }"
-              :value="item.label"
-              :type="item.type"
-              @click.native="changed(item)"
-            />
-            <div class="clear" />
-          </div>
-
-          <uinfo :alarm="alarm.right" type="right" />
-        </div>
-      </div>
-      <div class="main-bottom">
-        <uinfo :alarm="alarm.me" type="me" />
-
-        <!-- 已出牌区域 自己-->
-        <div class="cards history">
-          <card
-            v-for="(item, i) in historyMe"
-            :key="i"
-            class="card small"
-            size="small"
-            :value="item.label"
-            :type="item.type"
-          />
-        </div>
-        <div :class="['msg', message.me ? 'say' : 'none']">
-          <span>{{ message.me }}</span>
-        </div>
-        <play-button
-          :special="special"
-          :is-can-play="isCanPlay"
-          :token="token"
-          :show-call="showCall"
-          :show-rob="showRob"
-          @childSend="childSend"
-          @play="play"
-        />
-        <div v-clickoutside="putdownAllCards" class="cards cards-height">
-          <card
-            v-for="(item, i) in cardsMe"
-            :key="i"
-            class="card big"
-            :style="{
-              transform: item.checked ? 'translate3d(0, -40px, 0)' : '',
-              transition: item.checked
-                ? 'transform 0.08s linear 0s'
-                : 'transform 0.18s linear 0s'
-            }"
-            :value="item.label"
-            :type="item.type"
-            @mousemove.native.stop="mousemove(item)"
-            @mouseup.native.stop="mouseup(item)"
-            @mousedown.native.stop="mousedown(item)"
-            @click.native.stop="changed(item)"
-          />
-          <div class="clear" />
-        </div>
-      </div>
-    </div>
-
+        </el-main>
+        <el-aside width="20%">
+          <el-row>
+            <el-col :span="8">
+              <HandCard :hand-cards="cardsRight" direction="right" />
+              <!-- <OutCard :out-card="outcardRight" /> -->
+              <div :class="['right-msg', tip.right ? 'say' : 'none']">
+                <span> {{ tip.right }} </span>
+              </div>
+            </el-col>
+            <el-col :span="12">
+              <user ref="user" :alarm-num="alarm['right']" direction="right" />
+            </el-col>
+          </el-row>
+        </el-aside>
+      </el-container>
+      <el-footer height="30vh">
+        <el-row>
+          <el-col :span="4">
+            <user ref="user" :alarm-num="alarm['mine']" direction="mine" />
+          </el-col>
+          <el-col :span="16">
+            <el-row>
+              <el-col :span="8">
+                <div style="width:200px;height:60px">
+                  .
+                </div>
+                <div :class="['mine-msg', tip.mine ? 'say' : 'none']">
+                  <span> {{ tip.mine }} </span>
+                </div>
+              </el-col>
+              <el-col :span="16">
+                <Action direction="mine" @setAlarm="setAlarm" @play="play" />
+              </el-col>
+            </el-row>
+            <el-row>
+              <el-col :span="24">
+                <!-- <el-button type="success" round @click="action">不抢</el-button> -->
+                <HandCard ref="handCard" :hand-cards="cardsMine" direction="mine" :open="true" size="big" />
+              </el-col>
+            </el-row>
+            <!-- <el-row style="background:skyblue;">
+              <div style="line-height:46px">1</div>
+            </el-row> -->
+          </el-col>
+        </el-row>
+      </el-footer>
+    </el-container>
     <fade :special-type="specialType" :special="special" />
     <setting />
   </div>
 </template>
 
 <script>
-import card from './components/Card'
-import uinfo from './components/Uinfo'
-import setting from './components/Setting'
-import playButton from './components/PlayButton'
-import fade from './components/Fade'
-import poker from '@/utils/poker'
+import User from './User'
+import HandCard from './HandCard'
+import OutCard from './OutCard'
+import Action from './Action'
+import Fade from './Fade'
+import Setting from './Setting'
 import auth from '@/utils/auth'
-import clickoutside from '@/directive/clickoutside'
-
 export default {
   name: 'Room',
   components: {
-    card,
-    uinfo,
-    setting,
-    fade,
-    playButton
+    User,
+    HandCard,
+    OutCard,
+    Action,
+    Setting,
+    Fade
   },
-  directives: { clickoutside },
   data() {
     return {
-      websocket: null,
-      first: false,
-      moveChange: false,
-      clickLock: false,
-      open: false,
-      special: false,
-      showCall: false,
-      showRob: false,
-      isCanPlay: false,
-      specialType: 0,
-      fullHeight: document.documentElement.clientHeight,
-      token: 'me', // me, right, left
-      cardsMe: [],
+      curCard: [],
+      cardsMine: [],
       cardsLeft: [],
       cardsRight: [],
-      historyMe: [],
-      historyLeft: [],
-      historyRight: [],
-      message: {
-        me: '',
-        right: '',
-        left: ''
-      },
-      alarm: {
-        me: '',
-        right: '',
-        left: ''
-      },
+      outcardMine: [
+        // { type: 'heart', checked: true, label: 3 },
+        // { type: 'heart', checked: true, label: 4 },
+        // { type: 'heart', checked: true, label: 5 }
+      ],
+      outcardLeft: [
+        // { type: 'heart', checked: true, label: 3 },
+        // { type: 'heart', checked: true, label: 4 },
+        // { type: 'heart', checked: true, label: 5 }
+      ],
+      outcardRight: [
+        // { type: 'heart', checked: true, label: 3 },
+        // { type: 'heart', checked: true, label: 4 },
+        // { type: 'heart', checked: true, label: 5 }
+      ],
+      special: false,
+      specialType: 0,
       types: {
         '1': 'heart',
         '2': 'spade',
         '3': 'diamond',
         '4': 'club'
       },
-      curCard: [],
-      meSeatno: '',
       clock: 0,
-      landlordUid: ''
+      alarm: {
+        mine: 0,
+        right: 0,
+        left: 0
+      },
+      tip: {
+        mine: '1',
+        right: '2',
+        left: '3'
+      }
     }
   },
-  computed: {},
+  computed: {
+    curUser() {
+      return this.$store.state.user.curUser
+    }
+  },
   watch: {
-    token(token) {
-      if (token === 'right') {
-        this.historyRight = []
-        setTimeout(() => {
-          this.message.left = ''
-        }, 2000)
+    curUser(curUser) {
+      console.log(curUser)
+      if (curUser === 'right') {
+        this.outcardRight = []
       }
-      if (token === 'left') {
-        this.historyLeft = []
-        setTimeout(() => {
-          this.message.me = ''
-        }, 2000)
+      if (curUser === 'left') {
+        this.outcardLeft = []
       }
-      if (token === 'me') {
-        this.historyMe = []
-        setTimeout(() => {
-          this.message.right = ''
-        }, 2000)
+      if (curUser === 'mine') {
+        this.outcardMine = []
       }
     }
   },
   created() {
-    window.addEventListener('resize', this.handleResize)
-    this.initWebSocket()
-  },
-  destroyed() {
-    this.websocket.close() // 离开路由之后断开websocket连接
+    const actions = {
+      cmd: 'ddz/enterRoom',
+      param: { room_no: 1000, grade: 'simple' },
+      access_token: '123'
+    }
+    setTimeout(() => {
+      this.$socket.sendObj(actions)
+    }, 1000)
+    this.message()
   },
   methods: {
-    initWebSocket() {
-      // 初始化weosocket
-      const wsurl =
-        'ws://' +
-        process.env.VUE_APP_SOCKET_URL +
-        ':' +
-        process.env.VUE_APP_SOCKET_PORT
-      this.websocket = new WebSocket(wsurl)
-      this.websocket.onmessage = this.onMessage
-      this.websocket.onopen = this.onOpen
-      this.websocket.onerror = this.onError
-      this.websocket.onclose = this.onClose
+    play() {
+      this.$refs.handCard.play()
     },
-    onOpen() {
-      const actions = {
-        cmd: 'ddz/enterRoom',
-        param: { room_no: 1000, grade: 'simple' },
-        access_token: '123'
+    setAlarm(curPoint, curUid, nextUid, type) {
+      let next = ''
+      const seatMap = JSON.parse(sessionStorage.seat_map)
+      if (curPoint === 0) {
+        this.tip[auth.getTokenByUid(curUid)] = type === 'call' ? '不叫' : '不抢'
       }
-      this.wsSend(JSON.stringify(actions))
+      if (nextUid !== '') {
+        const curUser = auth.getTokenByUid(nextUid)
+        this.$store.commit('user/setCurUser', curUser)
+        if (nextUid === seatMap.mine) {
+          this.$store.commit('user/setCall', true)
+          next = 'right'
+          this.alarm['left'] = 0
+        } else if (nextUid === seatMap.right) {
+          this.$store.commit('user/setCall', false)
+          this.$store.commit('user/setRob', false)
+          next = 'left'
+          this.alarm['mine'] = 0
+        } else {
+          this.$store.commit('user/setCall', false)
+          this.$store.commit('user/setRob', false)
+          next = 'mine'
+          this.alarm['right'] = 0
+        }
+        this.alarm[curUser] = 10
+        clearInterval(this.clock)
+        this.clock = setInterval(() => {
+          this.alarm[curUser]--
+        }, 1000)
+        this.$store.commit('user/setCurUser', next)
+      } else {
+        // 要重新发牌了,清空上局残留的闹钟
+        this.alarm['mine'] = 0
+        this.alarm['left'] = 0
+        this.alarm['right'] = 0
+        setTimeout(() => {
+          this.tip[auth.getTokenByUid(curUid)] = ''
+        }, 1000)
+      }
+      setTimeout(() => {
+        this.tip[auth.getTokenByUid(curUid)] = ''
+      }, 1000)
     },
-    onError() {
-      this.initWebSocket()
-    },
-    onMessage(e) {
-      const res = JSON.parse(e.data)
-
-      if (res.code === 200) {
+    message() {
+      this.$options.sockets.onmessage = (response) => {
+        const res = JSON.parse(response.data)
+        if (res.code === 400) {
+          this.common.tip(res.message, 'warning')
+          return
+        }
         const data = res.data.result
         switch (res.data.type) {
           case 'room_info':
+
             break
           case 'player_info': {
             let playerInfo = []
@@ -283,122 +260,32 @@ export default {
                 this.$store.commit('user/setNickname', ['left', data.nickname])
               }
             } else {
-              seatMap.me = data.uid
+              seatMap.mine = data.uid
               this.meSeatno = data.seat_no
-              this.$store.commit('user/setNickname', ['me', data.nickname])
+              this.$store.commit('user/setNickname', ['mine', data.nickname])
             }
             sessionStorage.seat_map = JSON.stringify(seatMap)
-            break
-          }
-          case 'ready': {
-            console.log(data)
-            console.log(Date.parse(new Date()))
-            const seatMap = JSON.parse(sessionStorage.seat_map)
-            for (const key in seatMap) {
-              if (key === 'me' && seatMap[key] === data.uid) {
-                this.$store.commit('user/setReady', ['me', true])
-              } else if (key === 'left' && seatMap[key] === data.uid) {
-                this.$store.commit('user/setReady', ['left', true])
-              } else if (key === 'right' && seatMap[key] === data.uid) {
-                this.$store.commit('user/setReady', ['right', true])
-              }
-            }
             break
           }
           case 'deal':
             console.log('发牌了')
             this.curCard = data.player_hand_cards.reverse()
-            this.cardsMe = []
+            this.cardsMine = []
             this.cardsLeft = []
             this.cardsRight = []
+            this.$store.commit('user/setStartState', true)
             this.deal()
             break
-          case 'call': {
-            const curCallUid = data.cur_call_uid // 当前发送叫或不叫地主消息的玩家
-            const nextCallUid = data.next_call_uid // 下一个该叫地主的玩家 如果该值为空这表明叫地主一轮结束了,没有下一个了
-            this._setAlarm(
-              data.cur_call_point,
-              curCallUid,
-              nextCallUid,
-              'call'
-            )
-            break
-          }
-          case 'rob': {
-            const curRobUid = data.cur_rob_uid
-            const nextRobUid = data.next_rob_uid
-            this.showCall = false
-            this.showRob = true
-            this._setAlarm(data.cur_rob_point, curRobUid, nextRobUid, 'rob')
-            break
-          }
-          case 'is_can_play':
-            console.log('is_can_play')
-            console.log(data)
-            this.token = auth.getTokenByUid(data.cur_uid)
-            this.showCall = false
-            this.showRob = false
-            this.isCanPlay = true
-            this.alarm['me'] = 0
-            this.alarm['right'] = 0
-            this.alarm['left'] = 0
-            this.landlordUid = data.cur_uid
-            this._addLandlordCards(data.cur_uid, data.remain_card)
-            break
           case 'play':
-            console.log(data)
-            this.showCard(data.cbCard)
+            this.showCard(data)
             break
           case 'pass':
-            console.log(data)
             this.showPass(data)
-            break
-          case 'end':
-            console.log('本局结束')
-            console.log(data)
-            this.showSpecial(1)
             break
           default:
             break
         }
-      } else {
-        this.message[this.token] = res.message
-        setTimeout(() => {
-          this.message[this.token] = ''
-        }, 2000)
       }
-    },
-    onClose(e) {
-      console.log('断开连接', e)
-    },
-    wsSend(msg) {
-      this.websocket.send(msg)
-    },
-    childSend(res) {
-      this.wsSend(res)
-    },
-    mousedown(event) {
-      this.moveChange = true
-      this.first = !event.checked
-    },
-    mousemove(event) {
-      this.clickLock = false
-      if (this.moveChange) {
-        this.clickLock = true
-        this.cardsMe.find(
-          c => c.label === event.label && c.type === event.type
-        ).checked = this.first
-      }
-    },
-    mouseup() {
-      this.moveChange = false
-    },
-    showSpecial(specialType) {
-      this.specialType = specialType
-      this.special = true
-      setTimeout(() => {
-        this.special = false
-      }, 2000)
     },
     deal() {
       const ccard = this.curCard.pop()
@@ -407,152 +294,56 @@ export default {
         setTimeout(() => {
           this.deal()
         }, 100)
-      } else {
-        this.$store.commit('user/setStartState', true)
       }
-    },
-    play() {
-      if (this.cardsMe.filter(c => c.checked).length < 1) {
-        this.$message({
-          showClose: true,
-          message: '请选择需要出的牌！',
-          duration: 2000,
-          type: 'warning'
-        })
-        return
-      }
-      this._playCard(this.cardsMe)
-      if (this.cardsMe.length === 0) {
-        this.showSpecial(1)
-      }
-      this.token = 'me'
-      this.message.right = ''
-      this.message.left = ''
     },
     showCard(data) {
       let next = ''
-      if (this.token === 'me') {
+      const curUser = auth.getTokenByUid(data.cbCard_uid)
+      const cbCard = data.cbCard
+      if (curUser === 'mine') {
         next = 'right'
-        this._addHistoryCard(data, this.historyMe, this.cardsMe, 'me')
-      } else if (this.token === 'left') {
-        next = 'me'
-        this._addHistoryCard(data, this.historyLeft, this.cardsLeft, 'left')
+        this._addHistoryCard(cbCard, this.outcardMine, this.cardsMine, 'mine')
+      } else if (curUser === 'left') {
+        next = 'mine'
+        this._addHistoryCard(cbCard, this.outcardLeft, this.cardsLeft, 'left')
       } else {
         next = 'left'
-        this._addHistoryCard(data, this.historyRight, this.cardsRight, 'right')
+        this._addHistoryCard(cbCard, this.outcardRight, this.cardsRight, 'right')
       }
-      this.token = next
+      this.$store.commit('user/setCurUser', next)
     },
     showPass(data) {
       let next = ''
-      const seatMap = JSON.parse(sessionStorage.seat_map)
-      for (const index in seatMap) {
-        if (seatMap[index] === data.cbCard_uid) {
-          this.token = index
-        }
-      }
-      this.message[this.token] = '要不起'
-      if (this.token === 'me') {
+      // const seatMap = JSON.parse(sessionStorage.seat_map)
+      // for (const index in seatMap) {
+      //   if (seatMap[index] === data.cbCard_uid) {
+      //     this.$store.commit('user/setCurUser', index)
+      //   }
+      // }
+      //
+      const curUser = auth.getTokenByUid(data.cbCard_uid)
+      this.tip[curUser] = '要不起'
+      if (curUser === 'mine') {
         next = 'right'
         setTimeout(() => {
-          this.message['me'] = ''
+          this.tip['mine'] = ''
         }, 1000)
-      } else if (this.token === 'left') {
-        next = 'me'
+      } else if (curUser === 'left') {
+        next = 'mine'
         setTimeout(() => {
-          this.message['left'] = ''
+          this.tip['left'] = ''
         }, 1000)
       } else {
         next = 'left'
         setTimeout(() => {
-          this.message['right'] = ''
+          this.tip['right'] = ''
         }, 1000)
       }
-      this.token = next
-    },
-    handleResize() {
-      this.fullHeight = document.documentElement.clientHeight
-    },
-    changed(item) {
-      if (!this.clickLock) item.checked = !item.checked
-    },
-    putdownAllCards() {
-      this.cardsMe.forEach(h => {
-        h.checked = false
-      })
-    },
-    _addLandlordCards(uid, remainCards) {
-      const token = auth.getTokenByUid(uid)
-      remainCards.forEach(h => {
-        if (token === 'me') {
-          const tmp = h.split('x')
-          this.cardsMe.push({
-            label: tmp[0],
-            type: this.types[tmp[1]],
-            checked: false
-          })
-        } else if (token === 'right') {
-          const tmp = h.split('x')
-          this.cardsRight.push({
-            label: tmp[0],
-            type: this.types[tmp[1]],
-            checked: false
-          })
-        } else {
-          const tmp = h.split('x')
-          this.cardsLeft.push({
-            label: tmp[0],
-            type: this.types[tmp[1]],
-            checked: false
-          })
-        }
-      })
-      this.cardsMe = poker.sortCrad(this.cardsMe)
-    },
-    _setAlarm(curPoint, curUid, nextUid, type) {
-      let next = ''
-      const seatMap = JSON.parse(sessionStorage.seat_map)
-      this.token = auth.getTokenByUid(nextUid)
-      if (curPoint === 0) {
-        this.message[auth.getTokenByUid(curUid)] =
-          type === 'call' ? '不叫' : '不抢'
-      }
-      if (nextUid !== '') {
-        if (nextUid === seatMap.me) {
-          this.showCall = true
-          next = 'right'
-          this.alarm['left'] = 0
-        } else if (nextUid === seatMap.right) {
-          this.showCall = false
-          this.showRob = false
-          next = 'left'
-          this.alarm['me'] = 0
-        } else {
-          this.showCall = false
-          this.showRob = false
-          next = 'me'
-          this.alarm['right'] = 0
-        }
-        this.alarm[this.token] = 10
-        clearInterval(this.clock)
-        const curToken = this.token
-        this.clock = setInterval(() => {
-          this.alarm[curToken]--
-        }, 1000)
-        this.token = next
-      } else {
-        // 要重新发牌了,清空上局残留的闹钟
-        this.alarm['me'] = 0
-        this.alarm['left'] = 0
-        this.alarm['right'] = 0
-        setTimeout(() => {
-          this.message[auth.getTokenByUid(curUid)] = ''
-        }, 1000)
-      }
+      this.$store.commit('user/setCurUser', next)
     },
     _add(ccard) {
       const tmp = ccard.split('x')
-      this.cardsMe.push({
+      this.cardsMine.push({
         label: tmp[0],
         type: this.types[tmp[1]],
         checked: false
@@ -568,39 +359,6 @@ export default {
         checked: false
       })
     },
-    _playCard(obj) {
-      console.log('出牌了...')
-      const tmp = []
-      tmp.push(...obj.filter(c => c.checked))
-      let cbCard = []
-      tmp.forEach(h => {
-        cbCard.push(h.label + 'x' + poker.str2num(h.type, this.types))
-      })
-      let cardsNum = poker.card2num(tmp)
-      cardsNum = cardsNum.sort((a, b) => a - b)
-      console.log(cardsNum)
-      const cardType = poker.checkType(cardsNum)
-      if (cardType === 'bomb_card') this.showSpecial(0)
-      if (!cardType) {
-        this.message.me = '错误的牌型~'
-        setTimeout(() => {
-          this.message['me'] = ''
-        }, 1000)
-        return
-      }
-      cbCard = cbCard.reverse()
-      const actions = {
-        cmd: 'ddz/play',
-        param: {
-          room_no: 1000,
-          grade: 'simple',
-          cbCard: cbCard,
-          cbCard_type: cardType
-        },
-        access_token: '123'
-      }
-      this.wsSend(JSON.stringify(actions))
-    },
     _addHistoryCard(data, history, handCards, type) {
       data.forEach(h => {
         const tmp = h.split('x')
@@ -610,16 +368,18 @@ export default {
           checked: true
         })
       })
+      console.log(history)
       // 同时从手牌删除
-      if (type === 'me') {
-        this.historyMe.forEach(h => {
-          this.cardsMe.splice(
-            this.cardsMe.findIndex(
+      if (type === 'mine') {
+        this.outcardMine.forEach(h => {
+          this.cardsMine.splice(
+            this.cardsMine.findIndex(
               n => n.label === h.label && n.type === h.type
             ),
             1
           )
         })
+        console.log(this.outcardMine)
       } else {
         history.forEach(() => {
           handCards.splice(0, 1)
@@ -630,214 +390,76 @@ export default {
 }
 </script>
 
-<style scoped>
-.desk {
+<style  scoped>
+.container {
   -moz-user-select: none;
-  -khtml-user-select: none;
-  user-select: none;
-  background-image: url("../../assets/images/desk.png");
-  width: 100%;
-  background-repeat: no-repeat;
-  background-size: 100% 100%;
-  overflow: hidden;
+  -o-user-select:none;
+  -khtml-user-select:none;
+  -webkit-user-select:none;
+  -ms-user-select:none;
+  user-select:none;
 }
-.alarm {
-  height: 20px;
+.el-header {
+  background-color: #B3C0D1;
+  color: #333;
+  text-align: center;
 }
-.cards-height {
-  height: 150px;
+.el-footer {
+  background-color: #B3C0D1;
+  color: #333;
+  text-align: center;
 }
-.cards {
-  width: 100%;
-  display: flex;
+.el-aside {
+  background-color: #D3DCE6;
+  color: #333;
+  text-align: center;
 }
-/* .cards .card { */
-/* float:left; */
-/*-moz-user-select:none;*/
-/* } */
-.cards .big:not(:first-child) {
-  margin-left: -45px;
+.el-main {
+  background-color: #E9EEF3;
+  color: #333;
+  text-align: center;
+  height: 60vh;
 }
-.cards .small:not(:first-child) {
-  margin-left: -35px;
-}
-.cards .clear {
-  clear: both;
-}
-.main {
-  display: flex;
-  flex-direction: column;
-  vertical-align: middle;
-  align-items: center;
-  align-content: center;
-  width: 100%;
-  height: 100%;
-}
-.main .main-top {
-  height: 60%;
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-}
-.main .main-bottom {
-  position: relative;
-  flex: auto;
-  height: 40%;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  margin-bottom: 20px;
-  width: 80%;
-  margin-left: 200px;
-}
-.main-top-left {
-  position: absolute;
-  left: 0px;
-  top: 30px;
-  width: 300px;
-  /* display: flex;
-  flex-direction: column;
-  justify-content: center; */
-}
-.main-top-right {
-  position: absolute;
-  right: 0px;
-  top: 30px;
-  width: 300px;
-  /* display: flex;
-  margin-right: 100px;
-  flex-direction: column;
-  justify-content: center; */
-}
-.main .other {
-  transform: rotate(90deg);
-}
-.main-bottom .history {
-  position: fixed;
-  height: 80px;
-  line-height: 50px;
-  width: 80%;
-  bottom: 200px;
-}
-.main-top-left .history {
-  position: relative;
-  left: 370px;
-  top: 30px;
-  height: 80px;
-  line-height: 50px;
-}
-.main-top-right .history {
-  position: relative;
-  width: 100%;
-  top: 30px;
-  height: 80px;
-  line-height: 50px;
-  right: 380px;
-  justify-content: flex-end;
-}
-
-.main-top-left .msg {
-  position: relative;
-  left: 270px;
-  top: 150px;
+.left-msg {
+  left: 20%;
+  top: 30%;
   height: 50px;
   line-height: 50px;
 }
-.main-top-right .msg {
-  position: relative;
+.right-msg {
   justify-content: flex-end;
-  top: 150px;
-  right: 280px;
+  top: 30%;
+  right: 20%;
   height: 50px;
   line-height: 50px;
 }
-.main-bottom .msg {
-  position: absolute;
+.mine-msg {
   justify-content: flex-end;
-  top: 60px;
-  left: 30%;
+  top: 65%;
+  left: 45%;
   line-height: 50px;
 }
 .say {
+  position: fixed;
   width: 150px;
   border-radius: 5px;
   background-color: rgba(0, 0, 0, 0.3);
-  position: relative;
   margin: 0 auto;
   color: #fff;
 }
-.main-top-left .say::before {
-  content: ""; /* #三角内容为空 */
-  width: 0px;
-  height: 0px;
-  border-top: 12px transparent solid;
-  border-left: 13px transparent solid;
-  border-right: 15px rgba(0, 0, 0, 0.5) solid;
-  border-bottom: 12px transparent solid;
+.mine-outcard {
   position: absolute;
-  margin: 13px -28px;
+  left: 46%;
+  top: 60%;
 }
-
-.main-top-right .say::after {
-  content: ""; /* #三角内容为空 */
-  width: 0px;
-  height: 0px;
-  border-top: 12px transparent solid;
-  border-left: 13px rgba(0, 0, 0, 0.5) solid;
-  border-right: 15px transparent solid;
-  border-bottom: 12px transparent solid;
+.left-outcard {
   position: absolute;
-  margin: 13px 82px;
+  left: 20%;
+  top: 26%;
 }
-
-.say span {
-  padding-left: 20px;
-}
-
-.main-top-left .card-recorder {
-  position: relative;
-  left: 245px;
-  top: 10px;
-  height: 50px;
-  line-height: 50px;
-}
-.main-top-right .card-recorder {
-  position: relative;
-  right: 5px;
-  top: 10px;
-  height: 50px;
-  line-height: 50px;
-}
-.card-recorder span {
-  display: block;
-  width: 30px;
-  height: 30px;
-  line-height: 30px;
-  border-radius: 50%;
-  color: #fea;
-  /* border: 1px solid #fff; */
-  font-size: 22px;
-  font-weight: 500;
-  text-align: center;
-}
-
-.card-member-img {
+.right-outcard {
   position: absolute;
-  left: 50px;
-  height: 100px;
-  width: 100px;
-}
-.card-member-img img {
-  width: 100%;
-  height: 100%;
-}
-.cards-margin-right {
-  position: absolute;
-  right: 130px;
-}
-.cards-margin-left {
-  position: absolute;
-  left: 120px;
+  right: 20%;
+  top: 26%;
 }
 </style>
