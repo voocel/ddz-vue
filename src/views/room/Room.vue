@@ -64,13 +64,9 @@
             </el-row>
             <el-row>
               <el-col :span="24">
-                <!-- <el-button type="success" round @click="action">不抢</el-button> -->
                 <HandCard ref="handCard" :hand-cards="cardsMine" direction="mine" :open="true" size="big" />
               </el-col>
             </el-row>
-            <!-- <el-row style="background:skyblue;">
-              <div style="line-height:46px">1</div>
-            </el-row> -->
           </el-col>
         </el-row>
       </el-footer>
@@ -104,21 +100,9 @@ export default {
       cardsMine: [],
       cardsLeft: [],
       cardsRight: [],
-      outcardMine: [
-        // { type: 'heart', checked: true, label: 3 },
-        // { type: 'heart', checked: true, label: 4 },
-        // { type: 'heart', checked: true, label: 5 }
-      ],
-      outcardLeft: [
-        // { type: 'heart', checked: true, label: 3 },
-        // { type: 'heart', checked: true, label: 4 },
-        // { type: 'heart', checked: true, label: 5 }
-      ],
-      outcardRight: [
-        // { type: 'heart', checked: true, label: 3 },
-        // { type: 'heart', checked: true, label: 4 },
-        // { type: 'heart', checked: true, label: 5 }
-      ],
+      outcardMine: [],
+      outcardLeft: [],
+      outcardRight: [],
       special: false,
       specialType: 0,
       types: {
@@ -134,9 +118,9 @@ export default {
         left: 0
       },
       tip: {
-        mine: '1',
-        right: '2',
-        left: '3'
+        mine: '',
+        right: '',
+        left: ''
       }
     }
   },
