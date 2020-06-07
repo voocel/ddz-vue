@@ -1,5 +1,5 @@
 <template>
-  <div v-clickoutside="putdownAllCards" :class="['cards', 'rotate-'+direction]">
+  <div v-clickoutside="putdownAllCards" :class="['rotate-'+direction]">
     <card
       v-for="(item, i) in handCards"
       :key="i"
@@ -161,16 +161,14 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
 .rotate-left {
-  width: 260px;
+  width: 100%;
   display: flex;
   margin-top: 150px;
-  margin-left: -80px;
   transform: rotate(90deg);
 }
 .rotate-right {
-  width: 260px;
+  width: 100%;
   display: flex;
   margin-top: 150px;
   transform: rotate(90deg);

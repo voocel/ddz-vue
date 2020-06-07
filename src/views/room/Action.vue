@@ -63,7 +63,7 @@ export default {
   created() {
     this.$options.sockets.onmessage = (response) => {
       const res = JSON.parse(response.data)
-      console.log(res)
+      if (res.code === 400) return
       const data = res.data.result
       switch (res.data.type) {
         case 'ready': {

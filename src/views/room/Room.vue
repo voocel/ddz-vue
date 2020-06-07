@@ -4,18 +4,15 @@
       <el-header height="10vh">Header</el-header>
       <el-container>
         <el-aside width="20%">
-          <el-row>
-            <el-col :span="12">
-              <user ref="user" :alarm-num="alarm['left']" direction="left" />
-            </el-col>
-            <el-col :span="8">
-              <HandCard :hand-cards="cardsLeft" direction="left" />
-              <!-- <OutCard :out-card="outcardLeft" /> -->
-              <div :class="['left-msg', tip.left ? 'say' : 'none']">
-                <span> {{ tip.left }} </span>
-              </div>
-            </el-col>
-          </el-row>
+          <div class="handcard-right">
+            <HandCard :hand-cards="cardsLeft" direction="left" />
+            <div :class="['left-tip', tip.left ? 'say' : 'none']">
+              <span> {{ tip.left }} </span>
+            </div>
+          </div>
+          <div class="user-left">
+            <user ref="user" :alarm-num="alarm['left']" direction="left" />
+          </div>
         </el-aside>
         <el-main>
           <div class="left-outcard">
@@ -29,18 +26,15 @@
           </div>
         </el-main>
         <el-aside width="20%">
-          <el-row>
-            <el-col :span="8">
-              <HandCard :hand-cards="cardsRight" direction="right" />
-              <!-- <OutCard :out-card="outcardRight" /> -->
-              <div :class="['right-msg', tip.right ? 'say' : 'none']">
-                <span> {{ tip.right }} </span>
-              </div>
-            </el-col>
-            <el-col :span="12">
-              <user ref="user" :alarm-num="alarm['right']" direction="right" />
-            </el-col>
-          </el-row>
+          <div class="handcard-left">
+            <HandCard :hand-cards="cardsRight" direction="right" />
+            <div :class="['right-tip', tip.right ? 'say' : 'none']">
+              <span> {{ tip.right }} </span>
+            </div>
+          </div>
+          <div class="user-right">
+            <user ref="user" :alarm-num="alarm['right']" direction="right" />
+          </div>
         </el-aside>
       </el-container>
       <el-footer height="30vh">
@@ -54,7 +48,7 @@
                 <div style="width:200px;height:60px">
                   .
                 </div>
-                <div :class="['mine-msg', tip.mine ? 'say' : 'none']">
+                <div :class="['mine-tip', tip.mine ? 'say' : 'none']">
                   <span> {{ tip.mine }} </span>
                 </div>
               </el-col>
@@ -352,7 +346,6 @@ export default {
           checked: true
         })
       })
-      console.log(history)
       // 同时从手牌删除
       if (type === 'mine') {
         this.outcardMine.forEach(h => {
@@ -363,7 +356,6 @@ export default {
             1
           )
         })
-        console.log(this.outcardMine)
       } else {
         history.forEach(() => {
           handCards.splice(0, 1)
@@ -404,28 +396,23 @@ export default {
   text-align: center;
   height: 60vh;
 }
-.left-msg {
-  left: 20%;
+.left-tip {
   top: 30%;
-  height: 50px;
-  line-height: 50px;
+  left: 20%;
 }
-.right-msg {
-  justify-content: flex-end;
+.right-tip {
   top: 30%;
   right: 20%;
-  height: 50px;
-  line-height: 50px;
 }
-.mine-msg {
-  justify-content: flex-end;
+.mine-tip {
   top: 65%;
   left: 45%;
-  line-height: 50px;
 }
 .say {
   position: fixed;
+  justify-content: flex-end;
   width: 150px;
+  line-height: 50px;
   border-radius: 5px;
   background-color: rgba(0, 0, 0, 0.3);
   margin: 0 auto;
@@ -445,5 +432,19 @@ export default {
   position: absolute;
   right: 20%;
   top: 26%;
+}
+.handcard-left {
+  float: left;
+  width: 60%;
+}
+.user-left {
+  float: right;
+}
+.handcard-right {
+  float: right;
+  width: 60%;
+}
+.user-right {
+  float: left;
 }
 </style>

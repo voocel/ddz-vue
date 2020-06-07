@@ -1,10 +1,7 @@
 <template>
   <div class="container">
     <div class="uinfo">
-      <!-- <div :class="['msg', message.me ? 'say' : 'none']">
-        <span>{{ message.me }}</span>
-      </div> -->
-      <div v-if="alarmNum > 0">
+      <div :style="styleObject">
         <div class="alarm">{{ alarmNum }}</div>
         <img width="56px" src="@/assets/images/alarm-clock.png" alt="">
       </div>
@@ -42,6 +39,12 @@ export default {
     }
   },
   computed: {
+    styleObject() {
+      if (this.alarmNum > 0) {
+        return
+      }
+      return 'visibility: hidden'
+    },
     isready() {
       return this.$store.state.user.isready[this.direction]
     },
@@ -61,7 +64,7 @@ export default {
   justify-content:center;
   align-items: center;
   .uinfo {
-    padding-top: 50px;
+    padding-top: 20px;
     .nickname {
       padding-bottom: 10px;
       color: rgb(39, 38, 38);
