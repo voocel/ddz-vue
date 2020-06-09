@@ -45,7 +45,7 @@ export default {
       return this.$store.state.user.curUser
     },
     isreadyMe() {
-      return this.$store.state.user.isready['me']
+      return this.$store.state.user.isready['mine']
     },
     showCall() {
       return this.$store.state.user.showCall
