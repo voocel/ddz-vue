@@ -1,12 +1,7 @@
 import axios from 'axios'
-import {
-  MessageBox,
-  Message
-} from 'element-ui'
+import { MessageBox, Message } from 'element-ui'
 import store from '@/store'
-import {
-  getToken
-} from '@/utils/auth'
+import { getToken } from '@/utils/auth'
 
 // create an axios instance
 const service = axios.create({
@@ -19,7 +14,6 @@ const service = axios.create({
 service.interceptors.request.use(
   config => {
     // do something before request is sent
-
     if (store.getters.token) {
       // let each request carry token
       // ['X-Token'] is a custom headers key
@@ -49,7 +43,6 @@ service.interceptors.response.use(
    */
   response => {
     const res = response.data
-    console.log(res)
     let token = response.headers.authorization
     if (token) {
       // axios.defaults.headers.common['Authorization'] = token
@@ -97,7 +90,6 @@ service.interceptors.response.use(
         duration: 3 * 1000
       })
     }
-
     return Promise.reject(error)
   }
 )

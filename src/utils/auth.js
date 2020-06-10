@@ -1,24 +1,23 @@
 const TokenKey = 'ddz_token'
 
-function getToken() {
-  return true
-  // return sessionStorage.getItem(TokenKey)
+export function getToken() {
+  return sessionStorage.getItem(TokenKey)
 }
 
-function setToken(token) {
+export function setToken(token) {
   return sessionStorage.setItem(TokenKey, token)
 }
 
-function removeToken() {
+export function removeToken() {
   return sessionStorage.removeItem(TokenKey)
 }
 
-function refreshToken(token) {
+export function refreshToken(token) {
   sessionStorage.removeItem(TokenKey)
   return sessionStorage.setItem(TokenKey, token)
 }
 
-function getTokenByUid(uid) {
+export function getTokenByUid(uid) {
   const seatMap = JSON.parse(sessionStorage.seat_map)
   for (const key in seatMap) {
     if (seatMap[key] === uid) {
@@ -27,10 +26,6 @@ function getTokenByUid(uid) {
   }
 }
 
-export default {
-  getToken,
-  setToken,
-  removeToken,
-  refreshToken,
-  getTokenByUid
+export function setUserInfo(userInfo) {
+  return sessionStorage.setItem('ddz_user_info', userInfo)
 }

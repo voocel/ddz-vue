@@ -1,15 +1,21 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Hall from '@/views/hall/Hall'
-import Room from '@/views/room/Room'
 
 Vue.use(VueRouter)
 
 const routes = [
   {
-    path: '/',
+    path: '/hall',
     name: 'Hall',
-    component: Hall,
+    component: () => import('@/views/hall/Hall'),
+    meta: {
+      requiresAuth: false
+    }
+  },
+  {
+    path: '/login',
+    name: 'Login',
+    component: () => import('@/views/user/Login'),
     meta: {
       requiresAuth: false
     }
@@ -17,7 +23,7 @@ const routes = [
   {
     path: '/room',
     name: 'Room',
-    component: Room,
+    component: () => import('@/views/room/Room'),
     meta: {
       requiresAuth: true
     }

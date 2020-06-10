@@ -1,4 +1,7 @@
+import { login, register } from '@/api/user'
+import { getToken, setToken, setUserInfo } from '@/utils/auth'
 const state = {
+  token: getToken(),
   startState: false,
   curUser: 'mine',
   nextUser: 'mine',
@@ -45,7 +48,35 @@ const mutations = {
   }
 }
 
-const actions = {}
+const actions = {
+  login({ commit }, userInfo) {
+    const { username, password } = userInfo
+    return new Promise((resolve, reject) => {
+      login({ username: username.trim(), password: password }).then(response => {
+        const { result } = response
+        setUserInfo(JSON.stringify({
+          nickname: result.nickname,
+          uid: result.uid
+        }))
+        setToken(result.token)
+        resolve()
+      }).catch(error => {
+        console.log(error)
+        reject(error)
+      })
+    })
+  },
+  register({ commit }, userInfo) {
+    const { username, password } = userInfo
+    return new Promise((resolve, reject) => {
+      register({ username: username.trim(), password: password }).then(response => {
+        resolve(response)
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  }
+}
 
 export default {
   namespaced: true,

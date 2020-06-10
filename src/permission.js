@@ -5,14 +5,14 @@ import {
 } from 'element-ui'
 import NProgress from 'nprogress' // progress bar
 import 'nprogress/nprogress.css' // progress bar style
-import auth from '@/utils/auth' // get token from cookie
+import { getToken } from '@/utils/auth' // get token from cookie
 import getTitle from '@/utils/get-title'
 
 NProgress.configure({
   showSpinner: false
 }) // NProgress Configuration
 
-const whiteList = ['/login', '/', '/register'] // no redirect whitelist
+const whiteList = ['/login', '/register'] // no redirect whitelist
 
 router.beforeEach(async(to, from, next) => {
   // start progress bar
@@ -22,11 +22,11 @@ router.beforeEach(async(to, from, next) => {
   document.title = getTitle(to.meta.title)
 
   // determine whether the user has logged in
-  const hasToken = auth.getToken()
+  const hasToken = getToken()
   if (hasToken) {
-    if (to.path === '/') {
+    if (to.path === '/' || to.path === '/login') {
       // if is logged in, redirect to the home page
-      next()
+      next('/hall')
       NProgress.done()
     } else {
       const hasGetUserInfo = store.getters.name
@@ -54,7 +54,7 @@ router.beforeEach(async(to, from, next) => {
       next()
     } else {
       // other pages that do not have permission to access are redirected to the login page.
-      next('/')
+      next('/login')
       NProgress.done()
     }
   }

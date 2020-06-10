@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import auth from '@/utils/auth'
+import { getTokenByUid } from '@/utils/auth'
 export default {
   name: 'Action',
   props: {
@@ -83,7 +83,7 @@ export default {
         case 'call': {
           const curCallUid = data.cur_call_uid // 当前发送叫或不叫地主消息的玩家
           const nextCallUid = data.next_call_uid // 下一个该叫地主的玩家 如果该值为空这表明叫地主一轮结束了,没有下一个了
-          const curUser = auth.getTokenByUid(nextCallUid)
+          const curUser = getTokenByUid(nextCallUid)
           this.$store.commit('user/setCurUser', curUser)
           this.$emit('setAlarm', data.cur_call_point, curCallUid, nextCallUid, 'call')
           break
@@ -96,7 +96,7 @@ export default {
           break
         }
         case 'is_can_play': {
-          const curUser = auth.getTokenByUid(data.cur_uid)
+          const curUser = getTokenByUid(data.cur_uid)
           this.$store.commit('user/setCurUser', curUser)
           this.$store.commit('user/setCall', false)
           this.$store.commit('user/setRob', false)

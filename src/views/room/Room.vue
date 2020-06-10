@@ -77,7 +77,7 @@ import OutCard from './OutCard'
 import Action from './Action'
 import Fade from './Fade'
 import Setting from './Setting'
-import auth from '@/utils/auth'
+import { getTokenByUid } from '@/utils/auth'
 export default {
   name: 'Room',
   components: {
@@ -156,10 +156,10 @@ export default {
       let next = ''
       const seatMap = JSON.parse(sessionStorage.seat_map)
       if (curPoint === 0) {
-        this.tip[auth.getTokenByUid(curUid)] = type === 'call' ? '不叫' : '不抢'
+        this.tip[getTokenByUid(curUid)] = type === 'call' ? '不叫' : '不抢'
       }
       if (nextUid !== '') {
-        const curUser = auth.getTokenByUid(nextUid)
+        const curUser = getTokenByUid(nextUid)
         this.$store.commit('user/setCurUser', curUser)
         if (nextUid === seatMap.mine) {
           this.$store.commit('user/setCall', true)
@@ -188,11 +188,11 @@ export default {
         this.alarm['left'] = 0
         this.alarm['right'] = 0
         setTimeout(() => {
-          this.tip[auth.getTokenByUid(curUid)] = ''
+          this.tip[getTokenByUid(curUid)] = ''
         }, 1000)
       }
       setTimeout(() => {
-        this.tip[auth.getTokenByUid(curUid)] = ''
+        this.tip[getTokenByUid(curUid)] = ''
       }, 1000)
     },
     message() {
@@ -276,7 +276,7 @@ export default {
     },
     showCard(data) {
       let next = ''
-      const curUser = auth.getTokenByUid(data.cbCard_uid)
+      const curUser = getTokenByUid(data.cbCard_uid)
       const cbCard = data.cbCard
       if (curUser === 'mine') {
         next = 'right'
@@ -299,7 +299,7 @@ export default {
       //   }
       // }
       //
-      const curUser = auth.getTokenByUid(data.cbCard_uid)
+      const curUser = getTokenByUid(data.cbCard_uid)
       this.tip[curUser] = '要不起'
       if (curUser === 'mine') {
         next = 'right'
