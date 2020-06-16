@@ -5,7 +5,7 @@
       <el-dropdown-menu slot="dropdown">
         <el-dropdown-item @click.native="test(111)">测试1</el-dropdown-item>
         <el-dropdown-item disabled>测试2</el-dropdown-item>
-        <el-dropdown-item divided>测试3</el-dropdown-item>
+        <el-dropdown-item divided @click.native="logout">退出登录</el-dropdown-item>
       </el-dropdown-menu>
     </el-dropdown>
   </div>
@@ -21,31 +21,16 @@ export default {
   computed: {},
   methods: {
     test() {
-      this.$message({
-        showClose: true,
-        message: '请选择需要出的牌！',
-        type: 'warning',
-        duration: 3000
-      })
       // let cardsNum = [1,1,1,1,2,2,2,2]
       // let res = this._checkThreeLine(cardsNum,cardsNum.length)
-      const num = [
-        '3',
-        '4',
-        '5',
-        '6',
-        '7',
-        '8',
-        '9',
-        '10',
-        'J',
-        'Q',
-        'K',
-        'A',
-        '2'
-      ]
-      const x = num.findIndex(n => n === 3)
+      const num = ['3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A', '2']
+      const x = num.findIndex(n => n === '8')
       console.log(x)
+    },
+    async logout() {
+      console.log('logout')
+      await this.$store.dispatch('user/logout')
+      this.$router.push('/login')
     }
   }
 }

@@ -10,6 +10,9 @@
       <div class="btn-room">
         <ul>
           <li>
+            <img class="match" width="180px" src="@/assets/images/btn_match_room.png" @click="match">
+          </li>
+          <li>
             <img width="180px" src="@/assets/images/btn_create_room.png" @click="handleCreate">
           </li>
           <li>
@@ -21,9 +24,10 @@
         <img width="450px" src="@/assets/images/hall_user2.png">
       </div>
     </div>
+    <setting />
     <el-dialog :visible.sync="dialogVisible" :close-on-click-modal="false" width="24%" top="20%">
       <div class="create-container">
-        <el-input v-model="roomno" placeholder="请输入房间号">
+        <el-input v-model="roomNo" placeholder="请输入房间号">
           <template slot="prepend">房间号: </template>
         </el-input>
       </div>
@@ -32,17 +36,33 @@
         <el-button type="primary" @click="dialogStatus==='create' ? create() : enter()">确 定</el-button>
       </span>
     </el-dialog>
+    <div class="matching">
+      <el-dialog
+        :close-on-click-modal="false"
+        :close-on-press-escape="false"
+        :visible.sync="isMatching"
+        :show-close="false"
+        width="580px"
+      >
+        <img src="@/assets/images/match.png" alt="">
+      </el-dialog>
+    </div>
   </div>
 </template>
 
 <script>
+import { getToken } from '@/utils/auth'
+import Setting from '../room/Setting'
+
 export default {
   name: 'Home',
+  components: { Setting },
   data() {
     return {
       dialogVisible: false,
       dialogStatus: 'create',
-      roomno: 100000
+      roomNo: 100000,
+      isMatching: false
     }
   },
   methods: {
@@ -54,11 +74,39 @@ export default {
       this.dialogStatus = 'enter'
       this.dialogVisible = true
     },
+    match() {
+      console.log('match')
+      this.isMatching = true
+      const actions = {
+        cmd: 'ddz/match',
+        param: {
+          room_no: this.roomNo
+        },
+        access_token: getToken()
+      }
+      this.$socket.sendObj(actions)
+    },
     create() {
       console.log('create')
+      const actions = {
+        cmd: 'ddz/createRoom',
+        param: {
+          game_number: 4
+        },
+        access_token: getToken()
+      }
+      this.$socket.sendObj(actions)
     },
     enter() {
       console.log('enter')
+      const actions = {
+        cmd: 'ddz/enterRoom',
+        param: {
+          room_no: this.roomNo
+        },
+        access_token: getToken()
+      }
+      this.$socket.sendObj(actions)
     }
   }
 }
@@ -71,6 +119,13 @@ export default {
 ::v-deep .el-dialog__body {
   padding-left: 16%;
 }
+::v-deep .matching .el-dialog{
+  opacity:0.9;
+  border-radius: 50%;
+}
+// .match:active {
+//   width: 175px;
+// }
 .home{
   -moz-user-select: none;
   -khtml-user-select: none;
@@ -92,9 +147,13 @@ export default {
       list-style: none;
       li {
         padding: 15px 0;
+        height: 80px;
         img {
           cursor: pointer;
         }
+      }
+      li:active img {
+        width: 175px;
       }
     }
   }

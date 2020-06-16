@@ -15,3 +15,11 @@ export function register(data) {
     data
   })
 }
+
+export function logout(data) {
+  return request({
+    url: '/user/logout',
+    method: 'post',
+    data
+  })
+}

@@ -29,3 +29,6 @@ export function getTokenByUid(uid) {
 export function setUserInfo(userInfo) {
   return sessionStorage.setItem('ddz_user_info', userInfo)
 }
+export function removeUserInfo(userInfo) {
+  return sessionStorage.removeItem('ddz_user_info')
+}

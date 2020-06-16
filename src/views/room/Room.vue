@@ -141,7 +141,7 @@ export default {
     const actions = {
       cmd: 'ddz/enterRoom',
       param: { room_no: 1000, grade: 'simple' },
-      access_token: '123'
+      access_token: 123
     }
     setTimeout(() => {
       this.$socket.sendObj(actions)
