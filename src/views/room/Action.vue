@@ -22,13 +22,17 @@
 </template>
 
 <script>
-import { getTokenByUid } from '@/utils/auth'
+import { getTokenByUid, getToken } from '@/utils/auth'
 export default {
   name: 'Action',
   props: {
     direction: {
       type: String,
       default: 'left'
+    },
+    roomNo: {
+      type: Number,
+      default: 0
     },
     special: {
       type: Boolean,
@@ -116,22 +120,22 @@ export default {
         case 'pass':
           actions = {
             cmd: 'ddz/' + type,
-            param: { room_no: 1000, grade: 'simple' },
-            access_token: '123'
+            param: { room_no: this.roomNo, grade: 'simple' },
+            access_token: getToken()
           }
           break
         case 'call':
           actions = {
             cmd: 'ddz/' + type,
-            param: { room_no: 1000, grade: 'simple', point: point },
-            access_token: '123'
+            param: { room_no: this.roomNo, grade: 'simple', point: point },
+            access_token: getToken()
           }
           break
         case 'rob':
           actions = {
             cmd: 'ddz/' + type,
-            param: { room_no: 1000, grade: 'simple', point: point },
-            access_token: '123'
+            param: { room_no: this.roomNo, grade: 'simple', point: point },
+            access_token: getToken()
           }
           this.$store.commit('user/setRob', true)
           break

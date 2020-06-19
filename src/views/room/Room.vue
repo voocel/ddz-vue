@@ -53,12 +53,12 @@
                 </div>
               </el-col>
               <el-col :span="16">
-                <Action direction="mine" @setAlarm="setAlarm" @play="play" />
+                <Action direction="mine" :room-no="roomNo" @setAlarm="setAlarm" @play="play" />
               </el-col>
             </el-row>
             <el-row>
               <el-col :span="24">
-                <HandCard ref="handCard" :hand-cards="cardsMine" direction="mine" :open="true" size="big" />
+                <HandCard ref="handCard" :room-no="roomNo" :hand-cards="cardsMine" direction="mine" :open="true" size="big" />
               </el-col>
             </el-row>
           </el-col>
@@ -77,7 +77,7 @@ import OutCard from './OutCard'
 import Action from './Action'
 import Fade from './Fade'
 import Setting from './Setting'
-import { getTokenByUid } from '@/utils/auth'
+import { getTokenByUid, getToken } from '@/utils/auth'
 export default {
   name: 'Room',
   components: {
@@ -99,6 +99,7 @@ export default {
       outcardRight: [],
       special: false,
       specialType: 0,
+      roomNo: 0,
       types: {
         '1': 'heart',
         '2': 'spade',
@@ -138,10 +139,24 @@ export default {
     }
   },
   created() {
+    this.roomNo = Number(this.$route.query.room_no)
+    if (String(this.roomNo).length !== 6 || !Number.isInteger(this.roomNo) || this.roomNo === 0) {
+      this.$confirm('房间号异常,请返回大厅重新进入', '系统提示', {
+        confirmButtonText: '返回大厅',
+        showClose: false,
+        closeOnPressEscape: false,
+        closeOnClickModal: false,
+        showCancelButton: false,
+        type: 'warning'
+      }).then(() => {
+        this.$router.push('/hall')
+      })
+      return
+    }
     const actions = {
       cmd: 'ddz/enterRoom',
-      param: { room_no: 1000, grade: 'simple' },
-      access_token: 123
+      param: { room_no: this.roomNo, grade: 'simple' },
+      access_token: getToken()
     }
     setTimeout(() => {
       this.$socket.sendObj(actions)

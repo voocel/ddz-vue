@@ -13,10 +13,10 @@
             <img class="match" width="180px" src="@/assets/images/btn_match_room.png" @click="match">
           </li>
           <li>
-            <img width="180px" src="@/assets/images/btn_create_room.png" @click="handleCreate">
+            <img width="180px" src="@/assets/images/btn_create_room.png" @click="createVisible=true">
           </li>
           <li>
-            <img width="180px" src="@/assets/images/btn_enter_room.png" @click="handleEnter">
+            <img width="180px" src="@/assets/images/btn_enter_room.png" @click="enterVisible=true">
           </li>
         </ul>
       </div>
@@ -25,17 +25,33 @@
       </div>
     </div>
     <setting />
-    <el-dialog :visible.sync="dialogVisible" :close-on-click-modal="false" width="24%" top="20%">
+    <el-dialog :visible.sync="enterVisible" :close-on-click-modal="false" width="24%" top="20%">
       <div class="create-container">
         <el-input v-model="roomNo" placeholder="请输入房间号">
           <template slot="prepend">房间号: </template>
         </el-input>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogStatus==='create' ? create() : enter()">确 定</el-button>
+        <el-button @click="enterVisible = false">取 消</el-button>
+        <el-button type="primary" @click="enter()">确 定</el-button>
       </span>
     </el-dialog>
+
+    <el-dialog :visible.sync="createVisible" title="游戏局数" :close-on-click-modal="false" width="24%" top="20%">
+      <div class="create-container">
+        <el-radio-group v-model="gameNumber">
+          <el-radio :label="1">1局</el-radio>
+          <el-radio :label="2">2局</el-radio>
+          <el-radio :label="4">4局</el-radio>
+          <el-radio :label="8">8局</el-radio>
+        </el-radio-group>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="createVisible = false">取 消</el-button>
+        <el-button type="primary" @click="create()">创 建</el-button>
+      </span>
+    </el-dialog>
+
     <div class="matching">
       <el-dialog
         :close-on-click-modal="false"
@@ -59,21 +75,42 @@ export default {
   components: { Setting },
   data() {
     return {
-      dialogVisible: false,
-      dialogStatus: 'create',
+      enterVisible: false,
+      createVisible: false,
+      gameNumber: 1,
       roomNo: 100000,
       isMatching: false
     }
   },
+  created() {
+    this.$options.sockets.onmessage = (response) => {
+      const res = JSON.parse(response.data)
+      if (res.code === 400) {
+        this.$message({
+          showClose: true,
+          message: res.message,
+          duration: 2000,
+          type: 'warning'
+        })
+        return
+      }
+      const data = res.data.result
+      console.log(data)
+      switch (res.data.type) {
+        case 'create_room': {
+          this.createVisible = false
+          this.$router.push({
+            path: '/room',
+            query: { 'room_no': data.room_no }
+          })
+          break
+        }
+        default:
+          break
+      }
+    }
+  },
   methods: {
-    handleCreate() {
-      this.dialogStatus = 'create'
-      this.dialogVisible = true
-    },
-    handleEnter() {
-      this.dialogStatus = 'enter'
-      this.dialogVisible = true
-    },
     match() {
       console.log('match')
       this.isMatching = true
@@ -87,11 +124,10 @@ export default {
       this.$socket.sendObj(actions)
     },
     create() {
-      console.log('create')
       const actions = {
         cmd: 'ddz/createRoom',
         param: {
-          game_number: 4
+          game_number: this.gameNumber
         },
         access_token: getToken()
       }
