@@ -1,7 +1,9 @@
 <template>
   <div class="container">
     <el-container>
-      <el-header height="10vh">Header</el-header>
+      <el-header height="10vh">
+        <Header :landlord-cards="landlordCards" />
+      </el-header>
       <el-container>
         <el-aside width="20%">
           <div class="handcard-right">
@@ -73,15 +75,18 @@
 <script>
 import User from './User'
 import HandCard from './HandCard'
+import Header from './Header'
 import OutCard from './OutCard'
 import Action from './Action'
 import Fade from './Fade'
 import Setting from './Setting'
+import poker from '@/utils/poker'
 import { getTokenByUid, getToken } from '@/utils/auth'
 export default {
   name: 'Room',
   components: {
     User,
+    Header,
     HandCard,
     OutCard,
     Action,
@@ -97,6 +102,7 @@ export default {
       outcardMine: [],
       outcardLeft: [],
       outcardRight: [],
+      landlordCards: [],
       special: false,
       specialType: 0,
       roomNo: 0,
@@ -126,7 +132,6 @@ export default {
   },
   watch: {
     curUser(curUser) {
-      console.log(curUser)
       if (curUser === 'right') {
         this.outcardRight = []
       }
@@ -269,11 +274,19 @@ export default {
             this.$store.commit('user/setStartState', true)
             this.deal()
             break
+          case 'is_can_play':
+            this._addLandlordCards(data.cur_uid, data.remain_card)
+            break
           case 'play':
             this.showCard(data)
             break
           case 'pass':
             this.showPass(data)
+            break
+          case 'end':
+            console.log('本局结束')
+            console.log(data)
+            this.showSpecial(1)
             break
           default:
             break
@@ -352,6 +365,37 @@ export default {
         checked: false
       })
     },
+    _addLandlordCards(uid, remainCards) {
+      const curUser = getTokenByUid(uid)
+      remainCards.forEach(h => {
+        const tmp = h.split('x')
+        this.landlordCards.push({
+          label: tmp[0],
+          type: this.types[tmp[1]],
+          checked: false
+        })
+        if (curUser === 'mine') {
+          this.cardsMine.push({
+            label: tmp[0],
+            type: this.types[tmp[1]],
+            checked: false
+          })
+        } else if (curUser === 'right') {
+          this.cardsRight.push({
+            label: tmp[0],
+            type: this.types[tmp[1]],
+            checked: false
+          })
+        } else {
+          this.cardsLeft.push({
+            label: tmp[0],
+            type: this.types[tmp[1]],
+            checked: false
+          })
+        }
+      })
+      this.cardsMine = poker.sortCrad(this.cardsMine)
+    },
     _addHistoryCard(data, history, handCards, type) {
       data.forEach(h => {
         const tmp = h.split('x')
@@ -376,6 +420,13 @@ export default {
           handCards.splice(0, 1)
         })
       }
+    },
+    showSpecial(specialType) {
+      this.specialType = specialType
+      this.special = true
+      setTimeout(() => {
+        this.special = false
+      }, 2000)
     }
   }
 }

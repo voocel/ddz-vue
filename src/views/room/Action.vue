@@ -1,14 +1,12 @@
 <template>
   <div class="container">
     <div v-show="!startState">
-      <el-button type="success" round @click.native="action('ready')">{{
-        isreadyMe ? "已准备" : "准备"
-      }}</el-button>
+      <img v-if="!isreadyMe" width="100px" src="@/assets/images/btn_start.png" @click="action('ready')">
     </div>
     <div v-show="startState && isCanPlay && curUser === 'mine'">
-      <el-button type="success" round @click="action('pass')">不出</el-button>
-      <el-button v-if="curUser === 'mine'" type="success" round @click="play">出牌</el-button>
-      <el-button v-else type="success" round style="background-color: #999;">出牌</el-button>
+      <img width="100px" src="@/assets/images/btn_pass.png" @click="action('pass')">
+      <img width="100px" src="@/assets/images/btn_tip.png">
+      <img width="100px" src="@/assets/images/btn_play.png" @click="play">
     </div>
     <div v-show="showCall">
       <el-button type="success" round @click="action('call', 0)">不叫</el-button>
@@ -74,7 +72,6 @@ export default {
           const seatMap = JSON.parse(sessionStorage.seat_map)
           for (const key in seatMap) {
             if (key === 'mine' && seatMap[key] === data.uid) {
-              console.log('ready..')
               this.$store.commit('user/setReady', ['mine', true])
             } else if (key === 'left' && seatMap[key] === data.uid) {
               this.$store.commit('user/setReady', ['left', true])
@@ -153,5 +150,8 @@ export default {
 .container {
   float: left;
   padding-left: 50px;
+  img:hover {
+    cursor: pointer;
+  }
 }
 </style>

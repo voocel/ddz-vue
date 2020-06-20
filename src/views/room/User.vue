@@ -3,10 +3,10 @@
     <div class="uinfo">
       <div :style="styleObject">
         <div class="alarm">{{ alarmNum }}</div>
-        <img width="56px" src="@/assets/images/alarm-clock.png" alt="">
+        <img width="56px" src="@/assets/images/alarm-clock.png">
       </div>
       <div v-if="!startState" class="ready">
-        <el-button v-if="isready" type="success" round>{{ "已准备" }}</el-button>
+        <img v-if="isready" width="80px" src="@/assets/images/btn_readied.png">
       </div>
       <div class="nickname">昵称:{{ nickname }}</div>
       <div class="header-img">

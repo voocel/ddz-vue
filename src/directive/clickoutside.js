@@ -9,7 +9,7 @@ export default {
    */
   bind(el, binding, vnode) {
     const documentHandler = function(e) {
-      if (!vnode.context || e.target.localName === 'button' || e.target.localName === 'span') {
+      if (!vnode.context || e.target.localName === 'button' || e.target.localName === 'span' || e.target.localName === 'img') {
       // if(!vnode.context) {
         return false
       }
