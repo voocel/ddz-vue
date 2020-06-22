@@ -86,19 +86,22 @@ export default {
     this.$options.sockets.onmessage = (response) => {
       const res = JSON.parse(response.data)
       if (res.code === 400) {
-        this.$message({
-          showClose: true,
-          message: res.message,
-          duration: 2000,
-          type: 'warning'
-        })
+        this.common.tip(res.message, 'warning', 2000)
         return
       }
       const data = res.data.result
-      console.log(data)
+      console.log(res.data)
       switch (res.data.type) {
         case 'create_room': {
           this.createVisible = false
+          this.$router.push({
+            path: '/room',
+            query: { 'room_no': data.room_no }
+          })
+          break
+        }
+        case 'match': {
+          this.isMatching = false
           this.$router.push({
             path: '/room',
             query: { 'room_no': data.room_no }
@@ -117,7 +120,8 @@ export default {
       const actions = {
         cmd: 'ddz/match',
         param: {
-          room_no: this.roomNo
+          room_no: this.roomNo,
+          grade: 'simple'
         },
         access_token: getToken()
       }
