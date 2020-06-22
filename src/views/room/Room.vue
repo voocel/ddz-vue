@@ -227,44 +227,9 @@ export default {
           case 'room_info':
 
             break
-          case 'player_info': {
-            let playerInfo = []
-            if (sessionStorage.player_info !== undefined) {
-              playerInfo = JSON.parse(sessionStorage.player_info)
-            }
-            var isInRoom = false
-            for (let i = 0; i < playerInfo.length; i++) {
-              if (playerInfo[i].uid === data.uid) {
-                isInRoom = true
-                playerInfo.splice(i, 1, data)
-              }
-            }
-            if (!isInRoom) playerInfo.push(data)
-
-            sessionStorage.player_info = JSON.stringify(playerInfo)
-            let seatMap = {}
-            if (sessionStorage.seat_map !== undefined) {
-              seatMap = JSON.parse(sessionStorage.seat_map)
-            }
-            if (data.uid !== 1) {
-              if (
-                data.seat_no === this.meSeatno + 1 ||
-                data.seat_no === this.meSeatno - 2
-              ) {
-                seatMap.right = data.uid
-                this.$store.commit('user/setNickname', ['right', data.nickname])
-              } else {
-                seatMap.left = data.uid
-                this.$store.commit('user/setNickname', ['left', data.nickname])
-              }
-            } else {
-              seatMap.mine = data.uid
-              this.meSeatno = data.seat_no
-              this.$store.commit('user/setNickname', ['mine', data.nickname])
-            }
-            sessionStorage.seat_map = JSON.stringify(seatMap)
+          case 'player_info':
+            this.playerInfo(data)
             break
-          }
           case 'deal':
             console.log('发牌了')
             this.curCard = data.player_hand_cards.reverse()
@@ -287,11 +252,51 @@ export default {
             console.log('本局结束')
             console.log(data)
             this.showSpecial(1)
+            this.$store.commit('user/setStartState', false)
+            this.$store.commit('user/resetReady')
+            this.$store.commit('user/setCanPlay', false)
             break
           default:
             break
         }
       }
+    },
+    playerInfo(data) {
+      let playerInfo = []
+      if (sessionStorage.player_info !== undefined) {
+        playerInfo = JSON.parse(sessionStorage.player_info)
+      }
+      var isInRoom = false
+      for (let i = 0; i < playerInfo.length; i++) {
+        if (playerInfo[i].uid === data.uid) {
+          isInRoom = true
+          playerInfo.splice(i, 1, data)
+        }
+      }
+      if (!isInRoom) playerInfo.push(data)
+
+      sessionStorage.player_info = JSON.stringify(playerInfo)
+      let seatMap = {}
+      if (sessionStorage.seat_map !== undefined) {
+        seatMap = JSON.parse(sessionStorage.seat_map)
+      }
+      if (data.uid !== 1) {
+        if (
+          data.seat_no === this.meSeatno + 1 ||
+                data.seat_no === this.meSeatno - 2
+        ) {
+          seatMap.right = data.uid
+          this.$store.commit('user/setNickname', ['right', data.nickname])
+        } else {
+          seatMap.left = data.uid
+          this.$store.commit('user/setNickname', ['left', data.nickname])
+        }
+      } else {
+        seatMap.mine = data.uid
+        this.meSeatno = data.seat_no
+        this.$store.commit('user/setNickname', ['mine', data.nickname])
+      }
+      sessionStorage.seat_map = JSON.stringify(seatMap)
     },
     deal() {
       const ccard = this.curCard.pop()

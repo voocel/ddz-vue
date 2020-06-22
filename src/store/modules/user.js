@@ -6,6 +6,7 @@ const state = {
   nextUser: 'mine',
   showCall: false,
   showRob: false,
+  isCanPlay: false,
   alarm: {
     left: 0,
     right: 0,
@@ -27,11 +28,21 @@ const mutations = {
   setReady(state, readyInfo) {
     state.isready[readyInfo[0]] = readyInfo[1]
   },
+  resetReady(state) {
+    state.isready = {
+      left: false,
+      right: false,
+      mine: false
+    }
+  },
   setCall(state, call) {
     state.showCall = call
   },
   setRob(state, rob) {
     state.showRob = rob
+  },
+  setCanPlay(state, isCanPlay) {
+    state.isCanPlay = isCanPlay
   },
   setNickname(state, nick) {
     state.nickname[nick[0]] = nick[1]
@@ -84,6 +95,12 @@ const actions = {
       }).catch(error => {
         reject(error)
       })
+    })
+  },
+  resetToken({ commit }) {
+    return new Promise(resolve => {
+      removeToken()
+      resolve()
     })
   }
 }

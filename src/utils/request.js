@@ -14,7 +14,7 @@ const service = axios.create({
 service.interceptors.request.use(
   config => {
     // do something before request is sent
-    if (store.getters.token) {
+    if (getToken()) {
       // let each request carry token
       // ['X-Token'] is a custom headers key
       // please modify it according to the actual situation
@@ -54,7 +54,19 @@ service.interceptors.response.use(
     // if the custom code is not 20000, it is judged as an error.
     if (res.code !== 200) {
       // 401: Illegal token; 402: Token expired; 403: Other clients logged in;
-      if (res.code === 401 || res.code === 402 || res.code === 403) {
+      Message({
+        message: res.msg || 'Error',
+        type: 'error',
+        duration: 5 * 1000
+      })
+      return Promise.reject(new Error(res.msg || 'Error'))
+    } else {
+      return res
+    }
+  },
+  error => {
+    if (error.response) {
+      if (error.response.data.code === 401 || error.response.data.code === 402) {
         MessageBox.confirm('登录状态已过期，您可以继续留在该页面，或者重新登录', '系统提示', {
           confirmButtonText: '重新登陆',
           cancelButtonText: '取消',
@@ -66,23 +78,11 @@ service.interceptors.response.use(
         }).catch(() => {})
       } else {
         Message({
-          message: res.msg || 'Error',
+          message: error.response.data.msg,
           type: 'error',
           duration: 5 * 1000
         })
       }
-      return Promise.reject(new Error(res.msg || 'Error'))
-    } else {
-      return res
-    }
-  },
-  error => {
-    if (error.response) {
-      Message({
-        message: error.response.data.msg,
-        type: 'error',
-        duration: 5 * 1000
-      })
     } else {
       Message({
         message: '网络开小差了!',

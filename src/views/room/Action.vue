@@ -37,17 +37,15 @@ export default {
       default: true
     }
   },
-  data() {
-    return {
-      isCanPlay: false
-    }
-  },
   computed: {
     curUser() {
       return this.$store.state.user.curUser
     },
     isreadyMe() {
       return this.$store.state.user.isready['mine']
+    },
+    isCanPlay() {
+      return this.$store.state.user.isCanPlay
     },
     showCall() {
       return this.$store.state.user.showCall
@@ -65,6 +63,7 @@ export default {
   created() {
     this.$options.sockets.onmessage = (response) => {
       const res = JSON.parse(response.data)
+      console.log(res)
       if (res.code === 400) return
       const data = res.data.result
       switch (res.data.type) {
@@ -101,7 +100,7 @@ export default {
           this.$store.commit('user/setCurUser', curUser)
           this.$store.commit('user/setCall', false)
           this.$store.commit('user/setRob', false)
-          this.isCanPlay = true
+          this.$store.commit('user/setCanPlay', true)
           break
         }
         default:
