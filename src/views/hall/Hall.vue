@@ -102,10 +102,10 @@ export default {
         }
         case 'match': {
           this.isMatching = false
-          this.$router.push({
-            path: '/room',
-            query: { 'room_no': data.room_no }
-          })
+          // this.$router.push({
+          //   path: '/room',
+          //   query: { 'room_no': data.room_no }
+          // })
           break
         }
         default:
