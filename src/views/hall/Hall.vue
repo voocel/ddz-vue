@@ -101,11 +101,15 @@ export default {
           break
         }
         case 'match': {
+          this.isMatching = true
+          break
+        }
+        case 'room_info': {
           this.isMatching = false
-          // this.$router.push({
-          //   path: '/room',
-          //   query: { 'room_no': data.room_no }
-          // })
+          this.$router.push({
+            path: '/room',
+            query: { 'room_no': data.room_info.room_no }
+          })
           break
         }
         default:
@@ -115,8 +119,6 @@ export default {
   },
   methods: {
     match() {
-      console.log('match')
-      this.isMatching = true
       const actions = {
         cmd: 'ddz/match',
         param: {
@@ -138,7 +140,6 @@ export default {
       this.$socket.sendObj(actions)
     },
     enter() {
-      console.log('enter')
       const actions = {
         cmd: 'ddz/enterRoom',
         param: {
