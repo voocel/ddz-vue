@@ -5,7 +5,7 @@
     </div>
     <div class="bottom-box">
       <div @click="openLogin=true">
-        <img width="150px" src="@/assets/images/btn_ traveler.png" alt="">
+        <img width="150px" src="@/assets/images/button/traveler.png" alt="">
       </div>
     </div>
     <el-dialog :visible.sync="openLogin" :close-on-click-modal="false" width="400px">

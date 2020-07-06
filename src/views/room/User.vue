@@ -6,12 +6,12 @@
         <img width="56px" src="@/assets/images/alarm-clock.png">
       </div>
       <div v-if="!startState" class="ready">
-        <img v-if="isready" width="80px" src="@/assets/images/btn_readied.png">
+        <img v-if="isready" width="80px" src="@/assets/images/button/readied.png">
+      </div>
+      <div class="header-img">
+        <img src="@/assets/images/avatar/1.png">
       </div>
       <div class="nickname">昵称:{{ nickname }}</div>
-      <div class="header-img">
-        <img src="@/assets/images/default.jpg">
-      </div>
     </div>
   </div>
 </template>
@@ -64,16 +64,15 @@ export default {
   justify-content:center;
   align-items: center;
   .uinfo {
-    padding-top: 20px;
+    // padding-top: 20px;
     .nickname {
-      padding-bottom: 10px;
+      // padding-bottom: 10px;
       color: rgb(39, 38, 38);
     }
     .header-img {
       img {
         width: 80px;
         height: 80px;
-        border-radius: 50%;
       }
     }
   }

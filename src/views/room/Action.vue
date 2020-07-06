@@ -1,12 +1,12 @@
 <template>
   <div class="container">
     <div v-show="!startState">
-      <img v-if="!isreadyMe" width="100px" src="@/assets/images/btn_start.png" @click="action('ready')">
+      <img v-if="!isreadyMe" width="100px" src="@/assets/images/button/start.png" @click="action('ready')">
     </div>
     <div v-show="startState && isCanPlay && curUser === 'mine'">
-      <img width="100px" src="@/assets/images/btn_pass.png" @click="action('pass')">
-      <img width="100px" src="@/assets/images/btn_tip.png">
-      <img width="100px" src="@/assets/images/btn_play.png" @click="play">
+      <img width="100px" src="@/assets/images/button/pass.png" @click="action('pass')">
+      <img width="100px" src="@/assets/images/button/tip.png">
+      <img width="100px" src="@/assets/images/button/play.png" @click="play">
     </div>
     <div v-show="showCall">
       <el-button type="success" round @click="action('call', 0)">不叫</el-button>

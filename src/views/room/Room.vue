@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <el-container>
-      <el-header height="10vh">
+      <el-header height="120px">
         <Header :landlord-cards="landlordCards" />
       </el-header>
       <el-container>
@@ -39,8 +39,19 @@
           </div>
         </el-aside>
       </el-container>
-      <el-footer height="30vh">
-        <el-row>
+      <el-footer height="240px">
+        <div>
+          <div class="hand-card-mine">
+            <div class="user-mine">
+              <HandCard ref="handCard" :room-no="roomNo" :hand-cards="cardsMine" direction="mine" :open="true" size="big" />
+            </div>
+          </div>
+          <!-- <div class="user-right">
+            <user ref="user" :alarm-num="alarm['mine']" direction="mine" />
+          </div> -->
+          <div class="coin">123</div>
+        </div>
+        <!-- <el-row>
           <el-col :span="4">
             <user ref="user" :alarm-num="alarm['mine']" direction="mine" />
           </el-col>
@@ -64,7 +75,7 @@
               </el-col>
             </el-row>
           </el-col>
-        </el-row>
+        </el-row> -->
       </el-footer>
     </el-container>
     <fade :special-type="specialType" :special="special" />
@@ -77,7 +88,7 @@ import User from './User'
 import HandCard from './HandCard'
 import Header from './Header'
 import OutCard from './OutCard'
-import Action from './Action'
+// import Action from './Action'
 import Fade from './Fade'
 import Setting from './Setting'
 import poker from '@/utils/poker'
@@ -89,14 +100,18 @@ export default {
     Header,
     HandCard,
     OutCard,
-    Action,
+    // Action,
     Setting,
     Fade
   },
   data() {
     return {
       curCard: [],
-      cardsMine: [],
+      cardsMine: [
+        { label: '2', type: 'diamond', checked: false },
+        { label: '2', type: 'diamond', checked: false },
+        { label: '2', type: 'diamond', checked: false }
+      ],
       cardsLeft: [],
       cardsRight: [],
       outcardMine: [],
@@ -437,7 +452,7 @@ export default {
 }
 </script>
 
-<style  scoped>
+<style scoped lang="scss">
 .container {
   -moz-user-select: none;
   -o-user-select:none;
@@ -465,7 +480,7 @@ export default {
   background-color: #E9EEF3;
   color: #333;
   text-align: center;
-  height: 60vh;
+  height: calc(100vh - 360px);
 }
 .left-tip {
   top: 30%;
@@ -517,5 +532,18 @@ export default {
 }
 .user-right {
   float: left;
+}
+.user-mine {
+  float: left;
+}
+.hand-card-mine {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 15px;
+}
+.coin {
+  height: 40px;
+  background: skyblue;
 }
 </style>
