@@ -24,7 +24,7 @@
         <img width="450px" src="@/assets/images/hall_user2.png">
       </div>
     </div>
-    <setting />
+    <setting direction="hall" />
     <el-dialog :visible.sync="enterVisible" :close-on-click-modal="false" width="24%" top="20%">
       <div class="create-container">
         <el-input v-model="roomNo" placeholder="请输入房间号">

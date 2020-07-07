@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="user">
     <div class="uinfo">
       <div :style="styleObject">
         <div class="alarm">{{ alarmNum }}</div>
@@ -59,15 +59,14 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.container {
+.user {
   display:flex;
   justify-content:center;
   align-items: center;
   .uinfo {
-    // padding-top: 20px;
     .nickname {
-      // padding-bottom: 10px;
-      color: rgb(39, 38, 38);
+      padding-bottom: 20px;
+      color: rgb(218, 214, 214);
     }
     .header-img {
       img {

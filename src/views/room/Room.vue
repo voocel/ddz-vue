@@ -39,47 +39,26 @@
           </div>
         </el-aside>
       </el-container>
-      <el-footer height="240px">
+      <el-footer height="290px">
         <div>
-          <div class="hand-card-mine">
-            <div class="user-mine">
+          <div class="mine">
+            <div :class="['mine-tip', tip.mine ? 'say' : 'none']">
+              <span> {{ tip.mine }} </span>
+            </div>
+            <div class="hand-card-mine">
+              <Action direction="mine" :room-no="roomNo" @setAlarm="setAlarm" @play="play" />
               <HandCard ref="handCard" :room-no="roomNo" :hand-cards="cardsMine" direction="mine" :open="true" size="big" />
             </div>
+            <div class="user-mine">
+              <user ref="user" :alarm-num="alarm['mine']" direction="mine" />
+            </div>
           </div>
-          <!-- <div class="user-right">
-            <user ref="user" :alarm-num="alarm['mine']" direction="mine" />
-          </div> -->
           <div class="coin">123</div>
         </div>
-        <!-- <el-row>
-          <el-col :span="4">
-            <user ref="user" :alarm-num="alarm['mine']" direction="mine" />
-          </el-col>
-          <el-col :span="16">
-            <el-row>
-              <el-col :span="8">
-                <div style="width:200px;height:60px">
-                  .
-                </div>
-                <div :class="['mine-tip', tip.mine ? 'say' : 'none']">
-                  <span> {{ tip.mine }} </span>
-                </div>
-              </el-col>
-              <el-col :span="16">
-                <Action direction="mine" :room-no="roomNo" @setAlarm="setAlarm" @play="play" />
-              </el-col>
-            </el-row>
-            <el-row>
-              <el-col :span="24">
-                <HandCard ref="handCard" :room-no="roomNo" :hand-cards="cardsMine" direction="mine" :open="true" size="big" />
-              </el-col>
-            </el-row>
-          </el-col>
-        </el-row> -->
       </el-footer>
     </el-container>
     <fade :special-type="specialType" :special="special" />
-    <setting />
+    <setting direction="room" />
   </div>
 </template>
 
@@ -88,11 +67,11 @@ import User from './User'
 import HandCard from './HandCard'
 import Header from './Header'
 import OutCard from './OutCard'
-// import Action from './Action'
+import Action from './Action'
 import Fade from './Fade'
 import Setting from './Setting'
 import poker from '@/utils/poker'
-import { getTokenByUid, getToken } from '@/utils/auth'
+import { getDirection, getToken } from '@/utils/auth'
 export default {
   name: 'Room',
   components: {
@@ -100,7 +79,7 @@ export default {
     Header,
     HandCard,
     OutCard,
-    // Action,
+    Action,
     Setting,
     Fade
   },
@@ -108,9 +87,15 @@ export default {
     return {
       curCard: [],
       cardsMine: [
-        { label: '2', type: 'diamond', checked: false },
-        { label: '2', type: 'diamond', checked: false },
-        { label: '2', type: 'diamond', checked: false }
+        // { label: '2', type: 'diamond', checked: false },
+        // { label: '2', type: 'diamond', checked: false },
+        // { label: '2', type: 'diamond', checked: false },
+        // { label: '2', type: 'diamond', checked: false },
+        // { label: '2', type: 'diamond', checked: false },
+        // { label: '2', type: 'diamond', checked: false },
+        // { label: '2', type: 'diamond', checked: false },
+        // { label: '2', type: 'diamond', checked: false },
+        // { label: '2', type: 'diamond', checked: false }
       ],
       cardsLeft: [],
       cardsRight: [],
@@ -191,10 +176,10 @@ export default {
       let next = ''
       const seatMap = JSON.parse(sessionStorage.seat_map)
       if (curPoint === 0) {
-        this.tip[getTokenByUid(curUid)] = type === 'call' ? '不叫' : '不抢'
+        this.tip[getDirection(curUid)] = type === 'call' ? '不叫' : '不抢'
       }
       if (nextUid !== '') {
-        const curUser = getTokenByUid(nextUid)
+        const curUser = getDirection(nextUid)
         this.$store.commit('user/setCurUser', curUser)
         if (nextUid === seatMap.mine) {
           this.$store.commit('user/setCall', true)
@@ -223,11 +208,11 @@ export default {
         this.alarm['left'] = 0
         this.alarm['right'] = 0
         setTimeout(() => {
-          this.tip[getTokenByUid(curUid)] = ''
+          this.tip[getDirection(curUid)] = ''
         }, 1000)
       }
       setTimeout(() => {
-        this.tip[getTokenByUid(curUid)] = ''
+        this.tip[getDirection(curUid)] = ''
       }, 1000)
     },
     message() {
@@ -237,10 +222,11 @@ export default {
           this.common.tip(res.message, 'warning')
           return
         }
+        // console.log(res.data)
         const data = res.data.result
         switch (res.data.type) {
           case 'room_info':
-
+            this.roomInfo(data)
             break
           case 'player_info':
             this.playerInfo(data)
@@ -274,6 +260,16 @@ export default {
           default:
             break
         }
+      }
+    },
+    roomInfo(data) {
+      console.log(data)
+      const playerInfo = data.player_info
+      playerInfo.forEach((item) => {
+        this.$store.commit('user/setReady', [item['uid'], item['is_ready']])
+      })
+      if (data.remain_card) {
+        this.landlordCards = data.remain_card
       }
     },
     playerInfo(data) {
@@ -324,7 +320,7 @@ export default {
     },
     showCard(data) {
       let next = ''
-      const curUser = getTokenByUid(data.cbCard_uid)
+      const curUser = getDirection(data.cbCard_uid)
       const cbCard = data.cbCard
       if (curUser === 'mine') {
         next = 'right'
@@ -340,14 +336,7 @@ export default {
     },
     showPass(data) {
       let next = ''
-      // const seatMap = JSON.parse(sessionStorage.seat_map)
-      // for (const index in seatMap) {
-      //   if (seatMap[index] === data.cbCard_uid) {
-      //     this.$store.commit('user/setCurUser', index)
-      //   }
-      // }
-      //
-      const curUser = getTokenByUid(data.cbCard_uid)
+      const curUser = getDirection(data.cbCard_uid)
       this.tip[curUser] = '要不起'
       if (curUser === 'mine') {
         next = 'right'
@@ -386,7 +375,7 @@ export default {
       })
     },
     _addLandlordCards(uid, remainCards) {
-      const curUser = getTokenByUid(uid)
+      const curUser = getDirection(uid)
       remainCards.forEach(h => {
         const tmp = h.split('x')
         this.landlordCards.push({
@@ -460,27 +449,32 @@ export default {
   -webkit-user-select:none;
   -ms-user-select:none;
   user-select:none;
+  // background-image: url('../../assets/images/desk.jpg');
+  // background-repeat: no-repeat;
+  // background-size: 100% 100%;
+  // overflow: hidden;
+  // width: 100%;
 }
 .el-header {
-  background-color: #B3C0D1;
+  // background-color: #B3C0D1;
   color: #333;
   text-align: center;
 }
 .el-footer {
-  background-color: #B3C0D1;
+  // background-color: #B3C0D1;
   color: #333;
   text-align: center;
 }
 .el-aside {
-  background-color: #D3DCE6;
+  // background-color: #D3DCE6;
   color: #333;
   text-align: center;
 }
 .el-main {
-  background-color: #E9EEF3;
+  // background-color: #E9EEF3;
   color: #333;
   text-align: center;
-  height: calc(100vh - 360px);
+  height: calc(100vh - 410px);
 }
 .left-tip {
   top: 30%;
@@ -491,8 +485,8 @@ export default {
   right: 20%;
 }
 .mine-tip {
-  top: 65%;
-  left: 45%;
+  bottom: 290px;
+  left: 46%;
 }
 .say {
   position: fixed;
@@ -534,16 +528,19 @@ export default {
   float: left;
 }
 .user-mine {
-  float: left;
+  position: absolute;
+  left: 3%;
+  // bottom: 8%;
 }
-.hand-card-mine {
+.mine {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding-bottom: 15px;
+  height: 240px;
 }
 .coin {
-  height: 40px;
-  background: skyblue;
+  height: 50px;
+  background-color:rgba(0,0,0,0.2);
+  color: #fff;
 }
 </style>

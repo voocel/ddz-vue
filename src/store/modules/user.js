@@ -1,5 +1,5 @@
 import { login, register, logout } from '@/api/user'
-import { getToken, setToken, setUserInfo, removeToken, removeUserInfo } from '@/utils/auth'
+import { getToken, setToken, setUserInfo, removeToken, removeUserInfo, getDirection } from '@/utils/auth'
 const state = {
   startState: false,
   curUser: 'mine',
@@ -13,9 +13,9 @@ const state = {
     mine: 1
   },
   isready: {
-    left: false,
-    right: false,
-    mine: false
+    left: 0,
+    right: 0,
+    mine: 0
   },
   nickname: {
     left: '',
@@ -26,13 +26,13 @@ const state = {
 
 const mutations = {
   setReady(state, readyInfo) {
-    state.isready[readyInfo[0]] = readyInfo[1]
+    state.isready[getDirection(readyInfo[0])] = readyInfo[1]
   },
   resetReady(state) {
     state.isready = {
-      left: false,
-      right: false,
-      mine: false
+      left: 0,
+      right: 0,
+      mine: 0
     }
   },
   setCall(state, call) {
@@ -96,6 +96,9 @@ const actions = {
         reject(error)
       })
     })
+  },
+  backHall({ commit, state }) {
+    console.log('返回大厅')
   },
   resetToken({ commit }) {
     return new Promise(resolve => {

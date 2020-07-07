@@ -17,7 +17,7 @@ export function refreshToken(token) {
   return sessionStorage.setItem(TokenKey, token)
 }
 
-export function getTokenByUid(uid) {
+export function getDirection(uid) {
   const seatMap = JSON.parse(sessionStorage.seat_map)
   for (const key in seatMap) {
     if (seatMap[key] === uid) {

@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="action">
     <div v-show="!startState">
       <img v-if="!isreadyMe" width="100px" src="@/assets/images/button/start.png" @click="action('ready')">
     </div>
@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import { getTokenByUid, getToken } from '@/utils/auth'
+import { getDirection, getToken } from '@/utils/auth'
 export default {
   name: 'Action',
   props: {
@@ -63,27 +63,17 @@ export default {
   created() {
     this.$options.sockets.onmessage = (response) => {
       const res = JSON.parse(response.data)
-      console.log(res)
       if (res.code === 400) return
       const data = res.data.result
       switch (res.data.type) {
         case 'ready': {
-          const seatMap = JSON.parse(sessionStorage.seat_map)
-          for (const key in seatMap) {
-            if (key === 'mine' && seatMap[key] === data.uid) {
-              this.$store.commit('user/setReady', ['mine', true])
-            } else if (key === 'left' && seatMap[key] === data.uid) {
-              this.$store.commit('user/setReady', ['left', true])
-            } else if (key === 'right' && seatMap[key] === data.uid) {
-              this.$store.commit('user/setReady', ['right', true])
-            }
-          }
+          this.$store.commit('user/setReady', [data.uid, 1])
           break
         }
         case 'call': {
           const curCallUid = data.cur_call_uid // 当前发送叫或不叫地主消息的玩家
           const nextCallUid = data.next_call_uid // 下一个该叫地主的玩家 如果该值为空这表明叫地主一轮结束了,没有下一个了
-          const curUser = getTokenByUid(nextCallUid)
+          const curUser = getDirection(nextCallUid)
           this.$store.commit('user/setCurUser', curUser)
           this.$emit('setAlarm', data.cur_call_point, curCallUid, nextCallUid, 'call')
           break
@@ -96,7 +86,7 @@ export default {
           break
         }
         case 'is_can_play': {
-          const curUser = getTokenByUid(data.cur_uid)
+          const curUser = getDirection(data.cur_uid)
           this.$store.commit('user/setCurUser', curUser)
           this.$store.commit('user/setCall', false)
           this.$store.commit('user/setRob', false)
@@ -146,9 +136,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.container {
-  float: left;
-  padding-left: 50px;
+.action {
+  height: 65px;
   img:hover {
     cursor: pointer;
   }

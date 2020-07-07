@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="header">
     <div class="landlord-cards">
       <card
         v-for="(item, i) in landlordCards"
@@ -35,7 +35,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.container {
+.header {
   display: flex;
   justify-content: center;
   align-items: center;

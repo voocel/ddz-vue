@@ -5,7 +5,7 @@
       <el-dropdown-menu slot="dropdown">
         <el-dropdown-item @click.native="test(111)">测试1</el-dropdown-item>
         <el-dropdown-item disabled>测试2</el-dropdown-item>
-        <el-dropdown-item divided @click.native="logout">退出登录</el-dropdown-item>
+        <el-dropdown-item divided @click.native="logout">{{ direction === 'hall' ? '退出登录' : '返回大厅' }}</el-dropdown-item>
       </el-dropdown-menu>
     </el-dropdown>
   </div>
@@ -14,7 +14,12 @@
 <script>
 export default {
   name: 'Setting',
-  props: {},
+  props: {
+    direction: {
+      type: String,
+      default: 'hall'
+    }
+  },
   data() {
     return {}
   },
@@ -28,9 +33,13 @@ export default {
       console.log(x)
     },
     async logout() {
-      console.log('logout')
-      await this.$store.dispatch('user/logout')
-      this.$router.push('/login')
+      if (this.direction === 'hall') {
+        await this.$store.dispatch('user/logout')
+        this.$router.push('/login')
+      } else {
+        await this.$store.dispatch('user/backHall')
+        this.$router.push('/hall')
+      }
     }
   }
 }
