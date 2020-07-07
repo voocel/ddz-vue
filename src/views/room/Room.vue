@@ -71,7 +71,7 @@ import Action from './Action'
 import Fade from './Fade'
 import Setting from './Setting'
 import poker from '@/utils/poker'
-import { getDirection, getToken } from '@/utils/auth'
+import { getDirection, getToken, getUserInfo } from '@/utils/auth'
 export default {
   name: 'Room',
   components: {
@@ -291,7 +291,7 @@ export default {
       if (sessionStorage.seat_map !== undefined) {
         seatMap = JSON.parse(sessionStorage.seat_map)
       }
-      if (data.uid !== 1) {
+      if (data.uid !== getUserInfo().uid) {
         if (
           data.seat_no === this.meSeatno + 1 ||
                 data.seat_no === this.meSeatno - 2

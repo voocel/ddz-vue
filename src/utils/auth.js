@@ -29,6 +29,11 @@ export function getDirection(uid) {
 export function setUserInfo(userInfo) {
   return sessionStorage.setItem('ddz_user_info', userInfo)
 }
-export function removeUserInfo(userInfo) {
+
+export function getUserInfo() {
+  return JSON.parse(sessionStorage.getItem('ddz_user_info'))
+}
+
+export function removeUserInfo() {
   return sessionStorage.removeItem('ddz_user_info')
 }
