@@ -90,7 +90,7 @@ export default {
         return
       }
       const data = res.data.result
-      console.log(res.data)
+      // console.log(res.data)
       switch (res.data.type) {
         case 'create_room': {
           this.createVisible = false
@@ -101,6 +101,8 @@ export default {
           break
         }
         case 'match': {
+          console.log('match....')
+          console.log(res.data)
           this.isMatching = true
           break
         }
@@ -122,7 +124,6 @@ export default {
       const actions = {
         cmd: 'ddz/match',
         param: {
-          room_no: this.roomNo,
           grade: 'simple'
         },
         access_token: getToken()
@@ -143,7 +144,8 @@ export default {
       const actions = {
         cmd: 'ddz/enterRoom',
         param: {
-          room_no: this.roomNo
+          room_no: this.roomNo,
+          grade: 'simple'
         },
         access_token: getToken()
       }

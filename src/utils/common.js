@@ -2,6 +2,27 @@ import {
   Message
 } from 'element-ui'
 const obj = {
+  cardMap: {
+    '1': 'heart',
+    '2': 'spade',
+    '3': 'diamond',
+    '4': 'club'
+  },
+  batchFormatCards(arrCards) {
+    const resultCard = []
+    arrCards.forEach(h => {
+      resultCard.push(this.formatCard(h))
+    })
+    return resultCard
+  },
+  formatCard(originCard) {
+    const tmp = originCard.split('x')
+    return {
+      label: tmp[0],
+      type: this.cardMap[tmp[1]],
+      checked: false
+    }
+  },
   getCurTime(type = 0) {
     const myDate = new Date()
     const year = myDate.getFullYear()

@@ -1,6 +1,7 @@
 <template>
   <div id="app">
     <router-view />
+    <!-- <vue-component-inspector /> -->
   </div>
 </template>
 

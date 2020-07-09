@@ -7,7 +7,7 @@
       <el-container>
         <el-aside width="20%">
           <div class="handcard-right">
-            <HandCard :hand-cards="cardsLeft" direction="left" />
+            <HandCard :hand-cards="handCards['left']" direction="left" />
             <div :class="['left-tip', tip.left ? 'say' : 'none']">
               <span> {{ tip.left }} </span>
             </div>
@@ -18,18 +18,18 @@
         </el-aside>
         <el-main>
           <div class="left-outcard">
-            <OutCard :out-card="outcardLeft" />
+            <OutCard :out-card="outCards['left']" />
           </div>
           <div class="right-outcard">
-            <OutCard :out-card="outcardRight" />
+            <OutCard :out-card="outCards['right']" />
           </div>
           <div class="mine-outcard">
-            <OutCard :out-card="outcardMine" />
+            <OutCard :out-card="outCards['mine']" />
           </div>
         </el-main>
         <el-aside width="20%">
           <div class="handcard-left">
-            <HandCard :hand-cards="cardsRight" direction="right" />
+            <HandCard :hand-cards="handCards['right']" direction="right" />
             <div :class="['right-tip', tip.right ? 'say' : 'none']">
               <span> {{ tip.right }} </span>
             </div>
@@ -47,7 +47,7 @@
             </div>
             <div class="hand-card-mine">
               <Action direction="mine" :room-no="roomNo" @setAlarm="setAlarm" @play="play" />
-              <HandCard ref="handCard" :room-no="roomNo" :hand-cards="cardsMine" direction="mine" :open="true" size="big" />
+              <HandCard ref="handCard" :room-no="roomNo" :hand-cards="handCards['mine']" direction="mine" :open="true" size="big" />
             </div>
             <div class="user-mine">
               <user ref="user" :alarm-num="alarm['mine']" direction="mine" />
@@ -71,7 +71,7 @@ import Action from './Action'
 import Fade from './Fade'
 import Setting from './Setting'
 import poker from '@/utils/poker'
-import { getDirection, getToken, getUserInfo } from '@/utils/auth'
+import { getDirection, getUserInfo } from '@/utils/auth'
 export default {
   name: 'Room',
   components: {
@@ -86,22 +86,19 @@ export default {
   data() {
     return {
       curCard: [],
-      cardsMine: [
-        // { label: '2', type: 'diamond', checked: false },
-        // { label: '2', type: 'diamond', checked: false },
-        // { label: '2', type: 'diamond', checked: false },
-        // { label: '2', type: 'diamond', checked: false },
-        // { label: '2', type: 'diamond', checked: false },
-        // { label: '2', type: 'diamond', checked: false },
-        // { label: '2', type: 'diamond', checked: false },
-        // { label: '2', type: 'diamond', checked: false },
-        // { label: '2', type: 'diamond', checked: false }
-      ],
-      cardsLeft: [],
-      cardsRight: [],
-      outcardMine: [],
-      outcardLeft: [],
-      outcardRight: [],
+      handCards: {
+        mine: [
+          // { label: '2', type: 'diamond', checked: false },
+          // { label: '2', type: 'diamond', checked: false }
+        ],
+        left: [],
+        right: []
+      },
+      outCards: {
+        mine: [],
+        left: [],
+        right: []
+      },
       landlordCards: [],
       special: false,
       specialType: 0,
@@ -133,13 +130,13 @@ export default {
   watch: {
     curUser(curUser) {
       if (curUser === 'right') {
-        this.outcardRight = []
+        this.outCards['right'] = []
       }
       if (curUser === 'left') {
-        this.outcardLeft = []
+        this.outCards['left'] = []
       }
       if (curUser === 'mine') {
-        this.outcardMine = []
+        this.outCards['mine'] = []
       }
     }
   },
@@ -158,14 +155,15 @@ export default {
       })
       return
     }
-    const actions = {
-      cmd: 'ddz/enterRoom',
-      param: { room_no: this.roomNo, grade: 'simple' },
-      access_token: getToken()
-    }
-    setTimeout(() => {
-      this.$socket.sendObj(actions)
-    }, 1000)
+
+    // const actions = {
+    //   cmd: 'ddz/reconnect',
+    //   param: { room_no: this.roomNo, grade: 'simple' },
+    //   access_token: getToken()
+    // }
+    // setTimeout(() => {
+    //   this.$socket.sendObj(actions)
+    // }, 1000)
     this.message()
   },
   methods: {
@@ -234,9 +232,9 @@ export default {
           case 'deal':
             console.log('发牌了')
             this.curCard = data.player_hand_cards.reverse()
-            this.cardsMine = []
-            this.cardsLeft = []
-            this.cardsRight = []
+            this.handCards['mine'] = []
+            this.handCards['left'] = []
+            this.handCards['right'] = []
             this.$store.commit('user/setStartState', true)
             this.deal()
             break
@@ -263,7 +261,7 @@ export default {
       }
     },
     roomInfo(data) {
-      console.log(data)
+      // console.log(data)
       const playerInfo = data.player_info
       playerInfo.forEach((item) => {
         this.$store.commit('user/setReady', [item['uid'], item['is_ready']])
@@ -271,8 +269,12 @@ export default {
       if (data.remain_card) {
         this.landlordCards = data.remain_card
       }
+      if (data.player_hand_cards) {
+        this.handCards['mine'] = data.player_hand_cards
+      }
     },
     playerInfo(data) {
+      console.log(data)
       let playerInfo = []
       if (sessionStorage.player_info !== undefined) {
         playerInfo = JSON.parse(sessionStorage.player_info)
@@ -321,16 +323,13 @@ export default {
     showCard(data) {
       let next = ''
       const curUser = getDirection(data.cbCard_uid)
-      const cbCard = data.cbCard
+      this._addHistoryCard(data.cbCard, curUser)
       if (curUser === 'mine') {
         next = 'right'
-        this._addHistoryCard(cbCard, this.outcardMine, this.cardsMine, 'mine')
       } else if (curUser === 'left') {
         next = 'mine'
-        this._addHistoryCard(cbCard, this.outcardLeft, this.cardsLeft, 'left')
       } else {
         next = 'left'
-        this._addHistoryCard(cbCard, this.outcardRight, this.cardsRight, 'right')
       }
       this.$store.commit('user/setCurUser', next)
     },
@@ -357,76 +356,34 @@ export default {
       this.$store.commit('user/setCurUser', next)
     },
     _add(ccard) {
-      const tmp = ccard.split('x')
-      this.cardsMine.push({
-        label: tmp[0],
-        type: this.types[tmp[1]],
-        checked: false
-      })
-      this.cardsLeft.push({
-        label: tmp[0],
-        type: this.types[tmp[1]],
-        checked: false
-      })
-      this.cardsRight.push({
-        label: tmp[0],
-        type: this.types[tmp[1]],
-        checked: false
-      })
+      this.handCards['mine'].push(this.common.formatCard(ccard))
+      // TODO 其他两家的牌处理
+      this.handCards['left'].push(this.common.formatCard(ccard))
+      this.handCards['right'].push(this.common.formatCard(ccard))
     },
     _addLandlordCards(uid, remainCards) {
       const curUser = getDirection(uid)
-      remainCards.forEach(h => {
-        const tmp = h.split('x')
-        this.landlordCards.push({
-          label: tmp[0],
-          type: this.types[tmp[1]],
-          checked: false
-        })
-        if (curUser === 'mine') {
-          this.cardsMine.push({
-            label: tmp[0],
-            type: this.types[tmp[1]],
-            checked: false
-          })
-        } else if (curUser === 'right') {
-          this.cardsRight.push({
-            label: tmp[0],
-            type: this.types[tmp[1]],
-            checked: false
-          })
-        } else {
-          this.cardsLeft.push({
-            label: tmp[0],
-            type: this.types[tmp[1]],
-            checked: false
-          })
-        }
-      })
-      this.cardsMine = poker.sortCrad(this.cardsMine)
+      // 顶部显示地主牌
+      this.landlordCards = this.common.batchFormatCards(remainCards)
+      // 给手牌加上地主牌  TODO 其他两家的牌处理
+      this.handCards[curUser] = [...this.handCards[curUser], ...this.common.batchFormatCards(remainCards)]
+      this.handCards['mine'] = poker.sortCrad(this.handCards['mine'])
     },
-    _addHistoryCard(data, history, handCards, type) {
-      data.forEach(h => {
-        const tmp = h.split('x')
-        history.push({
-          label: tmp[0],
-          type: this.types[tmp[1]],
-          checked: true
-        })
-      })
+    _addHistoryCard(cbCard, type) {
+      this.outCards[type] = this.common.batchFormatCards(cbCard)
       // 同时从手牌删除
       if (type === 'mine') {
-        this.outcardMine.forEach(h => {
-          this.cardsMine.splice(
-            this.cardsMine.findIndex(
+        this.outCards['mine'].forEach(h => {
+          this.handCards['mine'].splice(
+            this.handCards['mine'].findIndex(
               n => n.label === h.label && n.type === h.type
             ),
             1
           )
         })
       } else {
-        history.forEach(() => {
-          handCards.splice(0, 1)
+        this.outCards[type].forEach(() => {
+          this.handCards[type].splice(0, 1)
         })
       }
     },

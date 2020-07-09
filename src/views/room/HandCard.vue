@@ -70,13 +70,7 @@ export default {
       moveChange: false,
       clickLock: false,
       specialType: 0,
-      special: false,
-      types: {
-        '1': 'heart',
-        '2': 'spade',
-        '3': 'diamond',
-        '4': 'club'
-      }
+      special: false
     }
   },
   methods: {
@@ -125,7 +119,7 @@ export default {
       tmp.push(...obj.filter(c => c.checked))
       let cbCard = []
       tmp.forEach(h => {
-        cbCard.push(h.label + 'x' + poker.str2num(h.type, this.types))
+        cbCard.push(h.label + 'x' + poker.str2num(h.type, this.common.cardMap))
       })
       let cardsNum = poker.card2num(tmp)
       cardsNum = cardsNum.sort((a, b) => a - b)
