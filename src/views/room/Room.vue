@@ -71,7 +71,7 @@ import Action from './Action'
 import Fade from './Fade'
 import Setting from './Setting'
 import poker from '@/utils/poker'
-import { getDirection, getUserInfo } from '@/utils/auth'
+import { getDirection, getToken, getUserInfo } from '@/utils/auth'
 export default {
   name: 'Room',
   components: {
@@ -156,14 +156,14 @@ export default {
       return
     }
 
-    // const actions = {
-    //   cmd: 'ddz/reconnect',
-    //   param: { room_no: this.roomNo, grade: 'simple' },
-    //   access_token: getToken()
-    // }
-    // setTimeout(() => {
-    //   this.$socket.sendObj(actions)
-    // }, 1000)
+    const actions = {
+      cmd: 'ddz/enterRoom',
+      param: { room_no: this.roomNo, grade: 'simple' },
+      access_token: getToken()
+    }
+    setTimeout(() => {
+      this.$socket.sendObj(actions)
+    }, 1000)
     this.message()
   },
   methods: {
@@ -261,20 +261,21 @@ export default {
       }
     },
     roomInfo(data) {
-      // console.log(data)
+      console.log(data)
       const playerInfo = data.player_info
       playerInfo.forEach((item) => {
         this.$store.commit('user/setReady', [item['uid'], item['is_ready']])
       })
-      if (data.remain_card) {
-        this.landlordCards = data.remain_card
-      }
       if (data.player_hand_cards) {
-        this.handCards['mine'] = data.player_hand_cards
+        this.handCards['mine'] = this.common.batchFormatCards(data.player_hand_cards)
+        this.$store.commit('user/setStartState', true)
+      }
+      if (data.remain_card) {
+        this.landlordCards = this.common.batchFormatCards(data.remain_card)
       }
     },
     playerInfo(data) {
-      console.log(data)
+      // console.log(data)
       let playerInfo = []
       if (sessionStorage.player_info !== undefined) {
         playerInfo = JSON.parse(sessionStorage.player_info)
