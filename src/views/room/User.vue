@@ -9,14 +9,16 @@
         <img v-if="isready" width="80px" src="@/assets/images/button/readied.png">
       </div>
       <div class="header-img">
-        <img src="@/assets/images/avatar/1.png">
+        <img :src="require('@/assets/images/avatar/'+avatar+'.png')">
       </div>
-      <div class="nickname">昵称:{{ nickname }}</div>
+      <div class="nickname">昵称: {{ userInfo.nickname }}</div>
     </div>
   </div>
 </template>
 
 <script>
+import { getPlayers } from '@/utils/auth'
+
 export default {
   name: 'Uinfo',
   props: {
@@ -31,6 +33,7 @@ export default {
   },
   data() {
     return {
+      userInfo: {},
       message: {
         mine: '',
         right: '',
@@ -48,11 +51,20 @@ export default {
     isready() {
       return this.$store.state.user.isready[this.direction]
     },
-    nickname() {
-      return this.$store.state.user.nickname[this.direction]
-    },
     startState() {
       return this.$store.state.user.startState
+    },
+    avatar() {
+      const avatar = this.userInfo.avatar
+      if (Number.isInteger(avatar) && avatar > 0 && avatar < 19) {
+        return avatar
+      }
+      return 1
+    }
+  },
+  watch: {
+    userInfo() {
+      return getPlayers()[this.direction]
     }
   }
 }

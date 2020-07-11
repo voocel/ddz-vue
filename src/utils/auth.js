@@ -18,7 +18,7 @@ export function refreshToken(token) {
 }
 
 export function getDirection(uid) {
-  const seatMap = JSON.parse(sessionStorage.seat_map)
+  const seatMap = getSeatMap()
   for (const key in seatMap) {
     if (seatMap[key] === uid) {
       return key
@@ -36,4 +36,20 @@ export function getUserInfo() {
 
 export function removeUserInfo() {
   return sessionStorage.removeItem('ddz_user_info')
+}
+
+export function setSeatMap(data) {
+  return sessionStorage.setItem('seat_map', data)
+}
+
+export function getSeatMap() {
+  return JSON.parse(sessionStorage.getItem('seat_map'))
+}
+
+export function setPlayers(data) {
+  return sessionStorage.setItem('players', data)
+}
+
+export function getPlayers() {
+  return JSON.parse(sessionStorage.getItem('players'))
 }

@@ -71,7 +71,8 @@ import Action from './Action'
 import Fade from './Fade'
 import Setting from './Setting'
 import poker from '@/utils/poker'
-import { getDirection, getToken, getUserInfo } from '@/utils/auth'
+import tips from '@/utils/tips'
+import { getDirection, getToken, getUserInfo, getSeatMap, setSeatMap, setPlayers, getPlayers } from '@/utils/auth'
 export default {
   name: 'Room',
   components: {
@@ -157,7 +158,7 @@ export default {
     }
 
     const actions = {
-      cmd: 'ddz/enterRoom',
+      cmd: 'ddz/reConnect',
       param: { room_no: this.roomNo, grade: 'simple' },
       access_token: getToken()
     }
@@ -172,7 +173,7 @@ export default {
     },
     setAlarm(curPoint, curUid, nextUid, type) {
       let next = ''
-      const seatMap = JSON.parse(sessionStorage.seat_map)
+      const seatMap = getSeatMap()
       if (curPoint === 0) {
         this.tip[getDirection(curUid)] = type === 'call' ? '不叫' : '不抢'
       }
@@ -216,7 +217,11 @@ export default {
     message() {
       this.$options.sockets.onmessage = (response) => {
         const res = JSON.parse(response.data)
-        if (res.code === 400) {
+        console.log(res)
+        if (res.code === 401 || res.code === 402) {
+          tips.reLoginTip()
+          return
+        } else if (res.code === 400) {
           this.common.tip(res.message, 'warning')
           return
         }
@@ -263,12 +268,18 @@ export default {
     roomInfo(data) {
       console.log(data)
       const playerInfo = data.player_info
-      playerInfo.forEach((item) => {
-        this.$store.commit('user/setReady', [item['uid'], item['is_ready']])
-      })
+      if (playerInfo) {
+        playerInfo.forEach((item) => {
+          this.playerInfo(item)
+          this.$store.commit('user/setReady', [item['uid'], item['is_ready']])
+        })
+      }
       if (data.player_hand_cards) {
         this.handCards['mine'] = this.common.batchFormatCards(data.player_hand_cards)
         this.$store.commit('user/setStartState', true)
+        this.$store.commit('user/setCanPlay', true)
+        const curUser = getDirection(data.cur_out_card_player_seat_uid)
+        this.$store.commit('user/setCurUser', curUser)
       }
       if (data.remain_card) {
         this.landlordCards = this.common.batchFormatCards(data.remain_card)
@@ -276,23 +287,12 @@ export default {
     },
     playerInfo(data) {
       // console.log(data)
-      let playerInfo = []
-      if (sessionStorage.player_info !== undefined) {
-        playerInfo = JSON.parse(sessionStorage.player_info)
-      }
-      var isInRoom = false
-      for (let i = 0; i < playerInfo.length; i++) {
-        if (playerInfo[i].uid === data.uid) {
-          isInRoom = true
-          playerInfo.splice(i, 1, data)
-        }
-      }
-      if (!isInRoom) playerInfo.push(data)
 
-      sessionStorage.player_info = JSON.stringify(playerInfo)
       let seatMap = {}
-      if (sessionStorage.seat_map !== undefined) {
-        seatMap = JSON.parse(sessionStorage.seat_map)
+      let players = {}
+      if (getSeatMap() !== null) {
+        seatMap = getSeatMap()
+        players = getPlayers()
       }
       if (data.uid !== getUserInfo().uid) {
         if (
@@ -300,17 +300,18 @@ export default {
                 data.seat_no === this.meSeatno - 2
         ) {
           seatMap.right = data.uid
-          this.$store.commit('user/setNickname', ['right', data.nickname])
+          players.right = data
         } else {
           seatMap.left = data.uid
-          this.$store.commit('user/setNickname', ['left', data.nickname])
+          players.left = data
         }
       } else {
         seatMap.mine = data.uid
+        players.mine = data
         this.meSeatno = data.seat_no
-        this.$store.commit('user/setNickname', ['mine', data.nickname])
       }
-      sessionStorage.seat_map = JSON.stringify(seatMap)
+      setSeatMap(JSON.stringify(seatMap))
+      setPlayers(JSON.stringify(players))
     },
     deal() {
       const ccard = this.curCard.pop()
@@ -407,11 +408,11 @@ export default {
   -webkit-user-select:none;
   -ms-user-select:none;
   user-select:none;
-  // background-image: url('../../assets/images/desk.jpg');
-  // background-repeat: no-repeat;
-  // background-size: 100% 100%;
-  // overflow: hidden;
-  // width: 100%;
+  background-image: url('../../assets/images/desk.jpg');
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  overflow: hidden;
+  width: 100%;
 }
 .el-header {
   // background-color: #B3C0D1;

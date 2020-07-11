@@ -16,11 +16,6 @@ const state = {
     left: 0,
     right: 0,
     mine: 0
-  },
-  nickname: {
-    left: '',
-    right: '',
-    mine: ''
   }
 }
 
@@ -43,9 +38,6 @@ const mutations = {
   },
   setCanPlay(state, isCanPlay) {
     state.isCanPlay = isCanPlay
-  },
-  setNickname(state, nick) {
-    state.nickname[nick[0]] = nick[1]
   },
   setStartState(state, status) {
     state.startState = status
