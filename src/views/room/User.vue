@@ -33,7 +33,6 @@ export default {
   },
   data() {
     return {
-      userInfo: {},
       message: {
         mine: '',
         right: '',
@@ -54,17 +53,15 @@ export default {
     startState() {
       return this.$store.state.user.startState
     },
+    userInfo() {
+      return getPlayers()[this.direction]
+    },
     avatar() {
       const avatar = this.userInfo.avatar
       if (Number.isInteger(avatar) && avatar > 0 && avatar < 19) {
         return avatar
       }
       return 1
-    }
-  },
-  watch: {
-    userInfo() {
-      return getPlayers()[this.direction]
     }
   }
 }

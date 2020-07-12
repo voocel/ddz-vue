@@ -53,7 +53,7 @@
               <user ref="user" :alarm-num="alarm['mine']" direction="mine" />
             </div>
           </div>
-          <div class="coin">123</div>
+          <div class="coin">金币数量: 8560</div>
         </div>
       </el-footer>
     </el-container>
