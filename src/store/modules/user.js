@@ -7,6 +7,7 @@ const state = {
   showCall: false,
   showRob: false,
   isCanPlay: false,
+  players: {},
   alarm: {
     left: 0,
     right: 0,
@@ -47,6 +48,9 @@ const mutations = {
   },
   setAlarm(state, alarm) {
     state.alarm = alarm
+  },
+  setPlayers(state, players) {
+    state.players = Object.assign({}, players)
   }
 }
 
@@ -98,6 +102,9 @@ const actions = {
       resolve()
     })
   }
+  // setPlayer(ctx, players) {
+  //   ctx.commit('setPlayers', players)
+  // }
 }
 
 export default {

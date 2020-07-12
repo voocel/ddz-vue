@@ -53,7 +53,10 @@
               <user ref="user" :alarm-num="alarm['mine']" direction="mine" />
             </div>
           </div>
-          <div class="coin">金币数量: 8560</div>
+          <div class="coin">
+            <div>
+              金币数量: 8560
+            </div></div>
         </div>
       </el-footer>
     </el-container>
@@ -72,7 +75,7 @@ import Fade from './Fade'
 import Setting from './Setting'
 import poker from '@/utils/poker'
 import tips from '@/utils/tips'
-import { getDirection, getToken, getUserInfo, getSeatMap, setSeatMap, setPlayers, getPlayers } from '@/utils/auth'
+import { getDirection, getToken, getUserInfo, getSeatMap, setSeatMap } from '@/utils/auth'
 export default {
   name: 'Room',
   components: {
@@ -171,49 +174,6 @@ export default {
     play() {
       this.$refs.handCard.play()
     },
-    setAlarm(curPoint, curUid, nextUid, type) {
-      let next = ''
-      const seatMap = getSeatMap()
-      if (curPoint === 0) {
-        this.tip[getDirection(curUid)] = type === 'call' ? '不叫' : '不抢'
-      }
-      if (nextUid !== '') {
-        const curUser = getDirection(nextUid)
-        this.$store.commit('user/setCurUser', curUser)
-        if (nextUid === seatMap.mine) {
-          this.$store.commit('user/setCall', true)
-          next = 'right'
-          this.alarm['left'] = 0
-        } else if (nextUid === seatMap.right) {
-          this.$store.commit('user/setCall', false)
-          this.$store.commit('user/setRob', false)
-          next = 'left'
-          this.alarm['mine'] = 0
-        } else {
-          this.$store.commit('user/setCall', false)
-          this.$store.commit('user/setRob', false)
-          next = 'mine'
-          this.alarm['right'] = 0
-        }
-        this.alarm[curUser] = 10
-        clearInterval(this.clock)
-        this.clock = setInterval(() => {
-          this.alarm[curUser]--
-        }, 1000)
-        this.$store.commit('user/setCurUser', next)
-      } else {
-        // 要重新发牌了,清空上局残留的闹钟
-        this.alarm['mine'] = 0
-        this.alarm['left'] = 0
-        this.alarm['right'] = 0
-        setTimeout(() => {
-          this.tip[getDirection(curUid)] = ''
-        }, 1000)
-      }
-      setTimeout(() => {
-        this.tip[getDirection(curUid)] = ''
-      }, 1000)
-    },
     message() {
       this.$options.sockets.onmessage = (response) => {
         const res = JSON.parse(response.data)
@@ -225,7 +185,6 @@ export default {
           this.common.tip(res.message, 'warning')
           return
         }
-        // console.log(res.data)
         const data = res.data.result
         switch (res.data.type) {
           case 'room_info':
@@ -266,7 +225,7 @@ export default {
       }
     },
     roomInfo(data) {
-      console.log(data)
+      // console.log(data)
       const playerInfo = data.player_info
       if (playerInfo) {
         playerInfo.forEach((item) => {
@@ -286,13 +245,11 @@ export default {
       }
     },
     playerInfo(data) {
-      // console.log(data)
-
       let seatMap = {}
       let players = {}
       if (getSeatMap() !== null) {
         seatMap = getSeatMap()
-        players = getPlayers()
+        players = this.$store.state.user.players
       }
       if (data.uid !== getUserInfo().uid) {
         if (
@@ -311,7 +268,8 @@ export default {
         this.meSeatno = data.seat_no
       }
       setSeatMap(JSON.stringify(seatMap))
-      setPlayers(JSON.stringify(players))
+      console.log('设置用户信息')
+      this.$store.commit('user/setPlayers', players)
     },
     deal() {
       const ccard = this.curCard.pop()
@@ -356,6 +314,49 @@ export default {
         }, 1000)
       }
       this.$store.commit('user/setCurUser', next)
+    },
+    setAlarm(curPoint, curUid, nextUid, type) {
+      let next = ''
+      const seatMap = getSeatMap()
+      if (curPoint === 0) {
+        this.tip[getDirection(curUid)] = type === 'call' ? '不叫' : '不抢'
+      }
+      if (nextUid !== '') {
+        const curUser = getDirection(nextUid)
+        this.$store.commit('user/setCurUser', curUser)
+        if (nextUid === seatMap.mine) {
+          this.$store.commit('user/setCall', true)
+          next = 'right'
+          this.alarm['left'] = 0
+        } else if (nextUid === seatMap.right) {
+          this.$store.commit('user/setCall', false)
+          this.$store.commit('user/setRob', false)
+          next = 'left'
+          this.alarm['mine'] = 0
+        } else {
+          this.$store.commit('user/setCall', false)
+          this.$store.commit('user/setRob', false)
+          next = 'mine'
+          this.alarm['right'] = 0
+        }
+        this.alarm[curUser] = 10
+        clearInterval(this.clock)
+        this.clock = setInterval(() => {
+          this.alarm[curUser]--
+        }, 1000)
+        this.$store.commit('user/setCurUser', next)
+      } else {
+        // 要重新发牌了,清空上局残留的闹钟
+        this.alarm['mine'] = 0
+        this.alarm['left'] = 0
+        this.alarm['right'] = 0
+        setTimeout(() => {
+          this.tip[getDirection(curUid)] = ''
+        }, 1000)
+      }
+      setTimeout(() => {
+        this.tip[getDirection(curUid)] = ''
+      }, 1000)
     },
     _add(ccard) {
       this.handCards['mine'].push(this.common.formatCard(ccard))
