@@ -51,18 +51,6 @@
         <el-button type="primary" @click="create()">创 建</el-button>
       </span>
     </el-dialog>
-
-    <div class="matching">
-      <el-dialog
-        :close-on-click-modal="false"
-        :close-on-press-escape="false"
-        :visible.sync="isMatching"
-        :show-close="false"
-        width="580px"
-      >
-        <img src="@/assets/images/match.png" alt="">
-      </el-dialog>
-    </div>
   </div>
 </template>
 
@@ -78,8 +66,7 @@ export default {
       enterVisible: false,
       createVisible: false,
       gameNumber: 1,
-      roomNo: 100000,
-      isMatching: false
+      roomNo: 100000
     }
   },
   created() {
@@ -100,20 +87,6 @@ export default {
           })
           break
         }
-        case 'match': {
-          console.log('match....')
-          console.log(res.data)
-          this.isMatching = true
-          break
-        }
-        case 'room_info': {
-          this.isMatching = false
-          this.$router.push({
-            path: '/room',
-            query: { 'room_no': data.room_info.room_no }
-          })
-          break
-        }
         default:
           break
       }
@@ -121,6 +94,10 @@ export default {
   },
   methods: {
     match() {
+      this.$router.push({
+        path: '/room',
+        query: { 'matching': 1 }
+      })
       const actions = {
         cmd: 'ddz/match',
         param: {

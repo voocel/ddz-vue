@@ -56,16 +56,11 @@ export default {
       return this.$store.state.user.startState
     },
     userInfo() {
-      // console.log('获取用户信息了....')
-      // console.log(this.$store.state.user.players)
       return this.$store.state.user.players[this.direction]
     },
     avatar() {
-      // console.log('获取头像')
-      // console.log(this.userInfo)
       if (this.userInfo) {
         const avatar = parseInt(this.userInfo.avatar)
-        console.log(avatar)
         if (Number.isInteger(avatar) && avatar > 0 && avatar < 19) {
           return avatar
         }
@@ -76,8 +71,6 @@ export default {
   watch: {
     userInfo: {
       handler(newVal, oldVal) {
-        console.log('更新')
-        console.log(newVal)
         this.nickname = newVal.nickname
       }
       // immediate: true,

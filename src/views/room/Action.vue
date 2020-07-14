@@ -1,7 +1,10 @@
 <template>
   <div class="action">
     <div v-show="!startState">
-      <img v-if="!isreadyMe" width="100px" src="@/assets/images/button/start.png" @click="action('ready')">
+      <!-- <img v-if="!isreadyMe" width="100px" src="@/assets/images/button/start.png" @click="action('ready')">
+      <img v-if="!isreadyMe" width="100px" src="@/assets/images/button/start.png" @click="action('ready')"> -->
+      <el-button v-if="isEnd" type="warning" round @click="action('change', 0)">换桌</el-button>
+      <el-button v-if="!isreadyMe" type="success" round @click="action('ready', 1)">准备</el-button>
     </div>
     <div v-show="startState && isCanPlay && curUser === 'mine'">
       <img width="100px" src="@/assets/images/button/pass.png" @click="action('pass')">
@@ -31,6 +34,10 @@ export default {
     roomNo: {
       type: Number,
       default: 0
+    },
+    isEnd: {
+      type: Boolean,
+      default: false
     },
     special: {
       type: Boolean,

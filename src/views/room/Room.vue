@@ -46,7 +46,7 @@
               <span> {{ tip.mine }} </span>
             </div>
             <div class="hand-card-mine">
-              <Action direction="mine" :room-no="roomNo" @setAlarm="setAlarm" @play="play" />
+              <Action direction="mine" :room-no="roomNo" :is-end="isEnd" @setAlarm="setAlarm" @play="play" />
               <HandCard ref="handCard" :room-no="roomNo" :hand-cards="handCards['mine']" direction="mine" :open="true" size="big" />
             </div>
             <div class="user-mine">
@@ -56,12 +56,24 @@
           <div class="coin">
             <div>
               金币数量: 8560
-            </div></div>
+            </div>
+          </div>
         </div>
       </el-footer>
     </el-container>
     <fade :special-type="specialType" :special="special" />
     <setting direction="room" />
+    <div class="matching">
+      <el-dialog
+        :close-on-click-modal="false"
+        :close-on-press-escape="false"
+        :visible.sync="isMatching"
+        :show-close="false"
+        width="580px"
+      >
+        <img src="@/assets/images/match.png" alt="">
+      </el-dialog>
+    </div>
   </div>
 </template>
 
@@ -103,8 +115,10 @@ export default {
         left: [],
         right: []
       },
+      isMatching: false,
       landlordCards: [],
       special: false,
+      isEnd: false,
       specialType: 0,
       roomNo: 0,
       types: {
@@ -145,21 +159,6 @@ export default {
     }
   },
   created() {
-    this.roomNo = Number(this.$route.query.room_no)
-    if (String(this.roomNo).length !== 6 || !Number.isInteger(this.roomNo) || this.roomNo === 0) {
-      this.$confirm('房间号异常,请返回大厅重新进入', '系统提示', {
-        confirmButtonText: '返回大厅',
-        showClose: false,
-        closeOnPressEscape: false,
-        closeOnClickModal: false,
-        showCancelButton: false,
-        type: 'warning'
-      }).then(() => {
-        this.$router.push('/hall')
-      })
-      return
-    }
-
     const actions = {
       cmd: 'ddz/reConnect',
       param: { room_no: this.roomNo, grade: 'simple' },
@@ -187,7 +186,13 @@ export default {
         }
         const data = res.data.result
         switch (res.data.type) {
+          case 'match': {
+            this.isMatching = true
+            break
+          }
           case 'room_info':
+            this.isMatching = false
+            this.roomNo = data.room_info.room_no
             this.roomInfo(data)
             break
           case 'player_info':
@@ -215,6 +220,7 @@ export default {
             console.log('本局结束')
             console.log(data)
             this.showSpecial(1)
+            this.isEnd = true
             this.$store.commit('user/setStartState', false)
             this.$store.commit('user/resetReady')
             this.$store.commit('user/setCanPlay', false)
@@ -268,7 +274,6 @@ export default {
         this.meSeatno = data.seat_no
       }
       setSeatMap(JSON.stringify(seatMap))
-      console.log('设置用户信息')
       this.$store.commit('user/setPlayers', players)
     },
     deal() {
