@@ -53,3 +53,11 @@ export function setPlayers(data) {
 export function getPlayers() {
   return JSON.parse(sessionStorage.getItem('players'))
 }
+
+export function setRoomNo(roomNo) {
+  return sessionStorage.setItem('room_no', roomNo)
+}
+
+export function getRoomNo() {
+  return sessionStorage.getItem('room_no')
+}

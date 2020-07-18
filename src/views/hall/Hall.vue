@@ -70,6 +70,7 @@ export default {
     }
   },
   created() {
+    console.log('回到大厅')
     this.$options.sockets.onmessage = (response) => {
       const res = JSON.parse(response.data)
       if (res.code === 400) {

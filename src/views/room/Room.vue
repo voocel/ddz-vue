@@ -46,8 +46,8 @@
               <span> {{ tip.mine }} </span>
             </div>
             <div class="hand-card-mine">
-              <Action direction="mine" :room-no="roomNo" :is-end="isEnd" @setAlarm="setAlarm" @play="play" />
-              <HandCard ref="handCard" :room-no="roomNo" :hand-cards="handCards['mine']" direction="mine" :open="true" size="big" />
+              <Action direction="mine" :room-no="getRoomNo()" :is-end="isEnd" @setAlarm="setAlarm" @play="play" />
+              <HandCard ref="handCard" :room-no="getRoomNo()" :hand-cards="handCards['mine']" direction="mine" :open="true" size="big" />
             </div>
             <div class="user-mine">
               <user ref="user" :alarm-num="alarm['mine']" direction="mine" />
@@ -87,7 +87,7 @@ import Fade from './Fade'
 import Setting from './Setting'
 import poker from '@/utils/poker'
 import tips from '@/utils/tips'
-import { getDirection, getToken, getUserInfo, getSeatMap, setSeatMap } from '@/utils/auth'
+import { getDirection, getToken, getUserInfo, getSeatMap, setSeatMap, setRoomNo, getRoomNo } from '@/utils/auth'
 export default {
   name: 'Room',
   components: {
@@ -161,7 +161,7 @@ export default {
   created() {
     const actions = {
       cmd: 'ddz/reConnect',
-      param: { room_no: this.roomNo, grade: 'simple' },
+      param: { room_no: getRoomNo(), grade: 'simple' },
       access_token: getToken()
     }
     setTimeout(() => {
@@ -192,12 +192,12 @@ export default {
           }
           case 'room_info':
             this.isMatching = false
-            this.roomNo = data.room_info.room_no
+            setRoomNo(data.room_info.room_no)
             this.roomInfo(data)
             break
-          case 'player_info':
-            this.playerInfo(data)
-            break
+          // case 'player_info':
+          //   this.playerInfo(data)
+          //   break
           case 'deal':
             console.log('发牌了')
             this.curCard = data.player_hand_cards.reverse()

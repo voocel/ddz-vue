@@ -12,6 +12,10 @@
         <img :src="require('@/assets/images/avatar/'+avatar+'.png')">
       </div>
       <div class="nickname">昵称: {{ nickname }}</div>
+      <div v-if="direction !== 'mine'" class="coin">
+        <div class="coin-icon"><img width="24px" src="@/assets/images/coin.png"></div>
+        <div class="coin-num">1234567</div>
+      </div>
       <!-- <div class="nickname">昵称: {{ userInfo ? userInfo.nickname : '' }}</div> -->
     </div>
   </div>
@@ -87,13 +91,27 @@ export default {
   align-items: center;
   .uinfo {
     .nickname {
-      padding-bottom: 20px;
+      padding-bottom: 5px;
       color: rgb(218, 214, 214);
     }
     .header-img {
       img {
         width: 80px;
         height: 80px;
+      }
+    }
+    .coin {
+      color: rgb(252, 195, 38);
+      font-size: 12px;
+      background: rgba(131, 131, 131, 0.6);
+      height: 18px;
+      border-radius: 10px;
+      .coin-icon {
+        float: left;
+      }
+      .coin-num {
+        float: left;
+        padding-left: 3px;
       }
     }
   }
