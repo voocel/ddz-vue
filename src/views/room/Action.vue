@@ -3,7 +3,7 @@
     <div v-show="!startState">
       <!-- <img v-if="!isreadyMe" width="100px" src="@/assets/images/button/start.png" @click="action('ready')">
       <img v-if="!isreadyMe" width="100px" src="@/assets/images/button/start.png" @click="action('ready')"> -->
-      <el-button v-if="isEnd" type="warning" round @click="action('change', 0)">换桌</el-button>
+      <el-button v-if="isEnd" type="warning" round @click="action('changeTable', 0)">换桌</el-button>
       <el-button v-if="!isreadyMe" type="success" round @click="action('ready', 1)">准备</el-button>
     </div>
     <div v-show="startState && isCanPlay && curUser === 'mine'">
@@ -23,17 +23,13 @@
 </template>
 
 <script>
-import { getDirection, getToken } from '@/utils/auth'
+import { getDirection, getToken, getRoomNo, setRoomNo } from '@/utils/auth'
 export default {
   name: 'Action',
   props: {
     direction: {
       type: String,
       default: 'left'
-    },
-    roomNo: {
-      type: Number,
-      default: 0
     },
     isEnd: {
       type: Boolean,
@@ -113,24 +109,32 @@ export default {
         case 'pass':
           actions = {
             cmd: 'ddz/' + type,
-            param: { room_no: this.roomNo, grade: 'simple' },
+            param: { room_no: getRoomNo(), grade: 'simple' },
             access_token: getToken()
           }
           break
         case 'call':
           actions = {
             cmd: 'ddz/' + type,
-            param: { room_no: this.roomNo, grade: 'simple', point: point },
+            param: { room_no: getRoomNo(), grade: 'simple', point: point },
             access_token: getToken()
           }
           break
         case 'rob':
           actions = {
             cmd: 'ddz/' + type,
-            param: { room_no: this.roomNo, grade: 'simple', point: point },
+            param: { room_no: getRoomNo(), grade: 'simple', point: point },
             access_token: getToken()
           }
           this.$store.commit('user/setRob', true)
+          break
+        case 'changeTable':
+          actions = {
+            cmd: 'ddz/' + type,
+            param: { room_no: getRoomNo(), grade: 'simple' },
+            access_token: getToken()
+          }
+          setRoomNo(0)
           break
       }
       this.$socket.sendObj(actions)

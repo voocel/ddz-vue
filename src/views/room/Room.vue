@@ -5,7 +5,7 @@
         <Header :landlord-cards="landlordCards" />
       </el-header>
       <el-container>
-        <el-aside width="20%">
+        <el-aside width="24%">
           <div class="handcard-right">
             <HandCard :hand-cards="handCards['left']" direction="left" />
             <div :class="['left-tip', tip.left ? 'say' : 'none']">
@@ -13,7 +13,7 @@
             </div>
           </div>
           <div class="user-left">
-            <user ref="user" :alarm-num="alarm['left']" direction="left" />
+            <user ref="user" :coin="coin.left" :alarm-num="alarm['left']" direction="left" />
           </div>
         </el-aside>
         <el-main>
@@ -27,7 +27,7 @@
             <OutCard :out-card="outCards['mine']" />
           </div>
         </el-main>
-        <el-aside width="20%">
+        <el-aside width="24%">
           <div class="handcard-left">
             <HandCard :hand-cards="handCards['right']" direction="right" />
             <div :class="['right-tip', tip.right ? 'say' : 'none']">
@@ -35,7 +35,7 @@
             </div>
           </div>
           <div class="user-right">
-            <user ref="user" :alarm-num="alarm['right']" direction="right" />
+            <user ref="user" :coin="coin.right" :alarm-num="alarm['right']" direction="right" />
           </div>
         </el-aside>
       </el-container>
@@ -46,16 +46,17 @@
               <span> {{ tip.mine }} </span>
             </div>
             <div class="hand-card-mine">
-              <Action direction="mine" :room-no="getRoomNo()" :is-end="isEnd" @setAlarm="setAlarm" @play="play" />
-              <HandCard ref="handCard" :room-no="getRoomNo()" :hand-cards="handCards['mine']" direction="mine" :open="true" size="big" />
+              <Action direction="mine" :is-end="isEnd" @setAlarm="setAlarm" @play="callPlay" />
+              <HandCard ref="handCard" :hand-cards="handCards['mine']" direction="mine" :open="true" size="big" />
             </div>
             <div class="user-mine">
               <user ref="user" :alarm-num="alarm['mine']" direction="mine" />
             </div>
           </div>
-          <div class="coin">
-            <div>
-              金币数量: 8560
+          <div class="bottom-bar">
+            <div class="coin">
+              <div class="coin-icon"><img width="26px" src="@/assets/images/coin.png"></div>
+              <div class="coin-num">{{ coin.mine }}</div>
             </div>
           </div>
         </div>
@@ -120,7 +121,11 @@ export default {
       special: false,
       isEnd: false,
       specialType: 0,
-      roomNo: 0,
+      coin: {
+        mine: 0,
+        right: 0,
+        left: 0
+      },
       types: {
         '1': 'heart',
         '2': 'spade',
@@ -170,7 +175,7 @@ export default {
     this.message()
   },
   methods: {
-    play() {
+    callPlay() {
       this.$refs.handCard.play()
     },
     message() {
@@ -264,14 +269,17 @@ export default {
         ) {
           seatMap.right = data.uid
           players.right = data
+          this.coin.right = data.coin
         } else {
           seatMap.left = data.uid
           players.left = data
+          this.coin.left = data.coin
         }
       } else {
         seatMap.mine = data.uid
         players.mine = data
         this.meSeatno = data.seat_no
+        this.coin.mine = data.coin
       }
       setSeatMap(JSON.stringify(seatMap))
       this.$store.commit('user/setPlayers', players)
@@ -429,6 +437,7 @@ export default {
   // background-color: #B3C0D1;
   color: #333;
   text-align: center;
+  padding: 0;
 }
 .el-aside {
   // background-color: #D3DCE6;
@@ -503,9 +512,30 @@ export default {
   align-items: center;
   height: 240px;
 }
-.coin {
+.bottom-bar {
   height: 50px;
   background-color:rgba(0,0,0,0.2);
   color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  .coin {
+    color: rgb(252, 195, 38);
+    font-size: 14px;
+    background: rgba(131, 131, 131, 0.6);
+    height: 24px;
+    line-height: 24px;
+    width: 86px;
+    border-radius: 10px;
+    .coin-icon {
+      float: left;
+      padding-top: 5px;
+      padding-left: 3px;
+    }
+    .coin-num {
+      float: left;
+      padding-left: 3px;
+    }
+  }
 }
 </style>

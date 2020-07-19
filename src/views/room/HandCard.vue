@@ -27,7 +27,7 @@
 import Card from './Card'
 import clickoutside from '@/directive/clickoutside'
 import poker from '@/utils/poker'
-import { getToken } from '@/utils/auth'
+import { getToken, getRoomNo } from '@/utils/auth'
 
 export default {
   name: 'Home',
@@ -45,10 +45,6 @@ export default {
     open: {
       type: Boolean,
       default: false
-    },
-    roomNo: {
-      type: Number,
-      default: 0
     },
     handCards: {
       type: Array,
@@ -138,7 +134,7 @@ export default {
       const actions = {
         cmd: 'ddz/play',
         param: {
-          room_no: this.roomNo,
+          room_no: getRoomNo(),
           grade: 'simple',
           cbCard: cbCard,
           cbCard_type: cardType

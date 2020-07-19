@@ -96,8 +96,7 @@ export default {
   methods: {
     match() {
       this.$router.push({
-        path: '/room',
-        query: { 'matching': 1 }
+        path: '/room'
       })
       const actions = {
         cmd: 'ddz/match',
