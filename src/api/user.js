@@ -23,3 +23,11 @@ export function logout(data) {
     data
   })
 }
+
+export function createRoom(data) {
+  return request({
+    url: '/user/createRoom',
+    method: 'post',
+    data
+  })
+}

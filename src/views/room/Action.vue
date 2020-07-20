@@ -23,7 +23,9 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import { getDirection, getToken, getRoomNo, setRoomNo } from '@/utils/auth'
+
 export default {
   name: 'Action',
   props: {
@@ -41,27 +43,36 @@ export default {
     }
   },
   computed: {
-    curUser() {
-      return this.$store.state.user.curUser
-    },
+    ...mapState({
+      curUser: state => state.user.curUser,
+      isreadyMe: state => state.user.isreadyMe['mine'],
+      isCanPlay: state => state.user.isCanPlay,
+      showCall: state => state.user.showCall,
+      showRob: state => state.user.showRob,
+      startState: state => state.user.startState,
+      handCard: state => state.user.handCard
+    }),
+    // curUser() {
+    //   return this.$store.state.user.curUser
+    // },
     isreadyMe() {
       return this.$store.state.user.isready['mine']
-    },
-    isCanPlay() {
-      return this.$store.state.user.isCanPlay
-    },
-    showCall() {
-      return this.$store.state.user.showCall
-    },
-    showRob() {
-      return this.$store.state.user.showRob
-    },
-    startState() {
-      return this.$store.state.user.startState
-    },
-    handCard() {
-      return this.$store.state.user.handCard
     }
+    // isCanPlay() {
+    //   return this.$store.state.user.isCanPlay
+    // },
+    // showCall() {
+    //   return this.$store.state.user.showCall
+    // },
+    // showRob() {
+    //   return this.$store.state.user.showRob
+    // },
+    // startState() {
+    //   return this.$store.state.user.startState
+    // },
+    // handCard() {
+    //   return this.$store.state.user.handCard
+    // }
   },
   created() {
     this.$options.sockets.onmessage = (response) => {

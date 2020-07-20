@@ -193,6 +193,7 @@ export default {
         switch (res.data.type) {
           case 'match': {
             this.isMatching = true
+            this.isEnd = false
             break
           }
           case 'room_info':
@@ -200,9 +201,6 @@ export default {
             setRoomNo(data.room_info.room_no)
             this.roomInfo(data)
             break
-          // case 'player_info':
-          //   this.playerInfo(data)
-          //   break
           case 'deal':
             console.log('发牌了')
             this.curCard = data.player_hand_cards.reverse()

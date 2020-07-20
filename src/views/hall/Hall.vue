@@ -57,6 +57,7 @@
 <script>
 import { getToken } from '@/utils/auth'
 import Setting from '../room/Setting'
+import { createRoom } from '@/api/user'
 
 export default {
   name: 'Home',
@@ -66,38 +67,15 @@ export default {
       enterVisible: false,
       createVisible: false,
       gameNumber: 1,
-      roomNo: 100000
+      roomNo: 0
     }
   },
   created() {
     console.log('回到大厅')
-    this.$options.sockets.onmessage = (response) => {
-      const res = JSON.parse(response.data)
-      if (res.code === 400) {
-        this.common.tip(res.message, 'warning', 2000)
-        return
-      }
-      const data = res.data.result
-      // console.log(res.data)
-      switch (res.data.type) {
-        case 'create_room': {
-          this.createVisible = false
-          this.$router.push({
-            path: '/room',
-            query: { 'room_no': data.room_no }
-          })
-          break
-        }
-        default:
-          break
-      }
-    }
+    this.$disconnect()
   },
   methods: {
     match() {
-      this.$router.push({
-        path: '/room'
-      })
       const actions = {
         cmd: 'ddz/match',
         param: {
@@ -105,17 +83,40 @@ export default {
         },
         access_token: getToken()
       }
-      this.$socket.sendObj(actions)
+      if (!this.$socket) {
+        this.$connect()
+        this.$options.sockets.onopen = () => {
+          this.$socket.sendObj(actions)
+          this.$router.push({
+            path: '/room'
+          })
+        }
+      } else {
+        console.log('直接发送')
+        this.$socket.sendObj(actions)
+        this.$router.push({
+          path: '/room'
+        })
+      }
     },
     create() {
-      const actions = {
-        cmd: 'ddz/createRoom',
-        param: {
-          game_number: this.gameNumber
-        },
-        access_token: getToken()
-      }
-      this.$socket.sendObj(actions)
+      createRoom({ game_number: this.gameNumber }).then(res => {
+        this.createVisible = false
+        const actions = {
+          cmd: 'ddz/enterRoom',
+          param: {
+            room_no: res.room_no,
+            grade: 'simple'
+          },
+          access_token: getToken()
+        }
+        this.$socket.sendObj(actions)
+        this.$router.push({
+          path: '/room'
+        })
+      }).catch(error => {
+        console.log(error)
+      })
     },
     enter() {
       const actions = {
