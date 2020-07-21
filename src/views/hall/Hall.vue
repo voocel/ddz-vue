@@ -140,10 +140,6 @@ export default {
 ::v-deep .el-dialog__body {
   padding-left: 16%;
 }
-::v-deep .matching .el-dialog{
-  opacity:0.9;
-  border-radius: 50%;
-}
 // .match:active {
 //   width: 175px;
 // }

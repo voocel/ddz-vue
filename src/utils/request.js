@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { MessageBox, Message } from 'element-ui'
+import { MessageBox, Message, Loading } from 'element-ui'
 import store from '@/store'
 import { getToken } from '@/utils/auth'
 
@@ -10,10 +10,15 @@ const service = axios.create({
   // withCredentials: true, // send cookies when cross-domain requests
   timeout: 20000 // request timeout
 })
+let loading = null
 // request interceptor
 service.interceptors.request.use(
   config => {
     // do something before request is sent
+    loading = Loading.service({
+      text: '正在加载中......',
+      fullscreen: true
+    })
     if (getToken()) {
       // let each request carry token
       // ['X-Token'] is a custom headers key
@@ -44,6 +49,7 @@ service.interceptors.response.use(
   response => {
     const res = response.data
     let token = response.headers.authorization
+    if (loading) loading.close()
     if (token) {
       // axios.defaults.headers.common['Authorization'] = token
       if (token.slice(0, 6) === 'Bearer' || token.slice(0, 6) === 'bearer') {
@@ -65,6 +71,7 @@ service.interceptors.response.use(
     }
   },
   error => {
+    if (loading) loading.close()
     if (error.response) {
       if (error.response.data.code === 401 || error.response.data.code === 402) {
         MessageBox.confirm('登录状态已过期，您可以继续留在该页面，或者重新登录', '系统提示', {

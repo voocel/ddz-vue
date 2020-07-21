@@ -28,9 +28,12 @@ export default {
     test() {
       // let cardsNum = [1,1,1,1,2,2,2,2]
       // let res = this._checkThreeLine(cardsNum,cardsNum.length)
-      const num = ['3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A', '2']
-      const x = num.findIndex(n => n === '8')
-      console.log(x)
+      // const num = ['3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A', '2']
+      // const x = num.findIndex(n => n === '8')
+      // console.log(x)
+    },
+    seatMap(serverSeat) {
+      return (((3 - (1 + 1) + (serverSeat + 1)) % 3 + 1))
     },
     async logout() {
       if (this.direction === 'hall') {

@@ -52,27 +52,9 @@ export default {
       startState: state => state.user.startState,
       handCard: state => state.user.handCard
     }),
-    // curUser() {
-    //   return this.$store.state.user.curUser
-    // },
     isreadyMe() {
       return this.$store.state.user.isready['mine']
     }
-    // isCanPlay() {
-    //   return this.$store.state.user.isCanPlay
-    // },
-    // showCall() {
-    //   return this.$store.state.user.showCall
-    // },
-    // showRob() {
-    //   return this.$store.state.user.showRob
-    // },
-    // startState() {
-    //   return this.$store.state.user.startState
-    // },
-    // handCard() {
-    //   return this.$store.state.user.handCard
-    // }
   },
   created() {
     this.$options.sockets.onmessage = (response) => {

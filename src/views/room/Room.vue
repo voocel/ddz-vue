@@ -58,6 +58,9 @@
               <div class="coin-icon"><img width="26px" src="@/assets/images/coin.png"></div>
               <div class="coin-num">{{ coin.mine }}</div>
             </div>
+            <div class="room-no">
+              房间号: {{ roomNo }}
+            </div>
           </div>
         </div>
       </el-footer>
@@ -88,7 +91,7 @@ import Fade from './Fade'
 import Setting from './Setting'
 import poker from '@/utils/poker'
 import tips from '@/utils/tips'
-import { getDirection, getToken, getUserInfo, getSeatMap, setSeatMap, setRoomNo, getRoomNo } from '@/utils/auth'
+import { getDirection, getToken, getUserInfo, setRoomNo, getRoomNo } from '@/utils/auth'
 export default {
   name: 'Room',
   components: {
@@ -148,6 +151,9 @@ export default {
   computed: {
     curUser() {
       return this.$store.state.user.curUser
+    },
+    roomNo() {
+      return getRoomNo()
     }
   },
   watch: {
@@ -169,10 +175,15 @@ export default {
       param: { room_no: getRoomNo(), grade: 'simple' },
       access_token: getToken()
     }
-    setTimeout(() => {
-      this.$socket.sendObj(actions)
-    }, 1000)
-    this.message()
+    if (!this.$socket) {
+      this.$connect()
+      this.$options.sockets.onopen = () => {
+        this.$socket.sendObj(actions)
+        this.message()
+      }
+    } else {
+      this.message()
+    }
   },
   methods: {
     callPlay() {
@@ -238,7 +249,7 @@ export default {
       const playerInfo = data.player_info
       if (playerInfo) {
         playerInfo.forEach((item) => {
-          this.playerInfo(item)
+          this.setPlayer(item)
           this.$store.commit('user/setReady', [item['uid'], item['is_ready']])
         })
       }
@@ -253,25 +264,31 @@ export default {
         this.landlordCards = this.common.batchFormatCards(data.remain_card)
       }
     },
-    playerInfo(data) {
-      let seatMap = {}
-      let players = {}
-      if (getSeatMap() !== null) {
-        seatMap = getSeatMap()
-        players = this.$store.state.user.players
-      }
+    setPlayer(data) {
+      const seatMap = this.$store.state.user.seatMap
+      const players = this.$store.state.user.players
+
       if (data.uid !== getUserInfo().uid) {
-        if (
-          data.seat_no === this.meSeatno + 1 ||
-                data.seat_no === this.meSeatno - 2
-        ) {
-          seatMap.right = data.uid
-          players.right = data
-          this.coin.right = data.coin
+        if (Object.prototype.hasOwnProperty.call(seatMap, 'mine')) {
+          if (Object.prototype.hasOwnProperty.call(seatMap, 'right')) {
+            seatMap.left = data.uid
+            players.left = data
+            this.coin.left = data.coin
+          } else {
+            seatMap.right = data.uid
+            players.right = data
+            this.coin.right = data.coin
+          }
         } else {
-          seatMap.left = data.uid
-          players.left = data
-          this.coin.left = data.coin
+          if (Object.prototype.hasOwnProperty.call(seatMap, 'right')) {
+            seatMap.left = data.uid
+            players.left = data
+            this.coin.left = data.coin
+          } else {
+            seatMap.right = data.uid
+            players.right = data
+            this.coin.right = data.coin
+          }
         }
       } else {
         seatMap.mine = data.uid
@@ -279,8 +296,8 @@ export default {
         this.meSeatno = data.seat_no
         this.coin.mine = data.coin
       }
-      setSeatMap(JSON.stringify(seatMap))
       this.$store.commit('user/setPlayers', players)
+      this.$store.commit('user/setSeatMap', seatMap)
     },
     deal() {
       const ccard = this.curCard.pop()
@@ -328,7 +345,7 @@ export default {
     },
     setAlarm(curPoint, curUid, nextUid, type) {
       let next = ''
-      const seatMap = getSeatMap()
+      const seatMap = this.$store.state.user.seatMap
       if (curPoint === 0) {
         this.tip[getDirection(curUid)] = type === 'call' ? '不叫' : '不抢'
       }
@@ -413,6 +430,10 @@ export default {
 </script>
 
 <style scoped lang="scss">
+::v-deep .matching .el-dialog{
+  opacity:0.9;
+  border-radius: 50%;
+}
 .container {
   -moz-user-select: none;
   -o-user-select:none;
@@ -534,6 +555,9 @@ export default {
       float: left;
       padding-left: 3px;
     }
+  }
+  .room-no {
+    margin-left: 20px;
   }
 }
 </style>

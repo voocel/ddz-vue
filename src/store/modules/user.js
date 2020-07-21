@@ -8,6 +8,7 @@ const state = {
   showRob: false,
   isCanPlay: false,
   players: {},
+  seatMap: {},
   alarm: {
     left: 0,
     right: 0,
@@ -51,6 +52,9 @@ const mutations = {
   },
   setPlayers(state, players) {
     state.players = Object.assign({}, players)
+  },
+  setSeatMap(state, seatMap) {
+    state.seatMap = Object.assign({}, seatMap)
   }
 }
 
