@@ -124,6 +124,7 @@ export default {
       special: false,
       isEnd: false,
       specialType: 0,
+      roomNo: 0,
       coin: {
         mine: 0,
         right: 0,
@@ -151,9 +152,6 @@ export default {
   computed: {
     curUser() {
       return this.$store.state.user.curUser
-    },
-    roomNo() {
-      return getRoomNo()
     }
   },
   watch: {
@@ -246,6 +244,7 @@ export default {
     },
     roomInfo(data) {
       // console.log(data)
+      this.roomNo = data.room_info.room_no
       const playerInfo = data.player_info
       if (playerInfo) {
         playerInfo.forEach((item) => {
@@ -557,6 +556,7 @@ export default {
     }
   }
   .room-no {
+    color: #fa6673;
     margin-left: 20px;
   }
 }
