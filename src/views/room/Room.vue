@@ -182,6 +182,7 @@ export default {
     } else {
       this.message()
     }
+    this.$store.dispatch('user/resetPlayerSeat')
   },
   methods: {
     callPlay() {
@@ -213,9 +214,7 @@ export default {
           case 'deal':
             console.log('发牌了')
             this.curCard = data.player_hand_cards.reverse()
-            this.handCards['mine'] = []
-            this.handCards['left'] = []
-            this.handCards['right'] = []
+            Object.assign(this.$data.handCards, this.$options.data().handCards)
             this.$store.commit('user/setStartState', true)
             this.deal()
             break
@@ -374,9 +373,7 @@ export default {
         this.$store.commit('user/setCurUser', next)
       } else {
         // 要重新发牌了,清空上局残留的闹钟
-        this.alarm['mine'] = 0
-        this.alarm['left'] = 0
-        this.alarm['right'] = 0
+        Object.assign(this.$data.alarm, this.$options.data().alarm)
         setTimeout(() => {
           this.tip[getDirection(curUid)] = ''
         }, 1000)

@@ -1,5 +1,5 @@
 <template>
-  <div v-clickoutside="putdownAllCards" :class="['rotate-'+direction]">
+  <div v-clickoutside="putdownAllCards" :class="['rotate-'+direction]" @mouseleave="mouseleave()">
     <card
       v-for="(item, i) in handCards"
       :key="i"
@@ -64,35 +64,41 @@ export default {
       // ],
       first: false,
       moveChange: false,
-      clickLock: false,
       specialType: 0,
-      special: false
+      special: false,
+      down: false
     }
   },
   methods: {
     putdownAllCards() {
-      this.handCards.forEach(h => {
-        h.checked = false
-      })
+      if (!this.down) {
+        this.handCards.forEach(h => {
+          h.checked = false
+        })
+      }
+      this.down = false
     },
     mousedown(event) {
       this.moveChange = true
+      this.down = true
       this.first = !event.checked
     },
     mousemove(event) {
-      this.clickLock = false
       if (this.moveChange) {
-        this.clickLock = true
         this.handCards.find(
           c => c.label === event.label && c.type === event.type
         ).checked = this.first
       }
     },
     mouseup() {
+      this.down = false
+      this.moveChange = false
+    },
+    mouseleave() {
       this.moveChange = false
     },
     changed(item) {
-      if (!this.clickLock) item.checked = !item.checked
+      item.checked = !item.checked
     },
     play() {
       if (this.handCards.filter(c => c.checked).length < 1) {

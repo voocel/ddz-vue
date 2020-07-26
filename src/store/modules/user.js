@@ -55,6 +55,10 @@ const mutations = {
   },
   setSeatMap(state, seatMap) {
     state.seatMap = Object.assign({}, seatMap)
+  },
+  resetPlayerSeat(state) {
+    state.players = {}
+    state.seatMap = {}
   }
 }
 
@@ -105,10 +109,10 @@ const actions = {
       removeToken()
       resolve()
     })
+  },
+  resetPlayerSeat(ctx) {
+    ctx.commit('resetPlayerSeat')
   }
-  // setPlayer(ctx, players) {
-  //   ctx.commit('setPlayers', players)
-  // }
 }
 
 export default {
