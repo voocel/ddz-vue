@@ -78,6 +78,7 @@
         <img src="@/assets/images/match.png" alt="">
       </el-dialog>
     </div>
+    <music ref="music" />
   </div>
 </template>
 
@@ -91,6 +92,7 @@ import Fade from './Fade'
 import Setting from './Setting'
 import poker from '@/utils/poker'
 import tips from '@/utils/tips'
+import Music from './Music'
 import { getDirection, getToken, getUserInfo, setRoomNo, getRoomNo } from '@/utils/auth'
 export default {
   name: 'Room',
@@ -101,7 +103,8 @@ export default {
     OutCard,
     Action,
     Setting,
-    Fade
+    Fade,
+    Music
   },
   data() {
     return {
@@ -222,6 +225,7 @@ export default {
             this._addLandlordCards(data.cur_uid, data.remain_card)
             break
           case 'play':
+            console.log(data)
             this.showCard(data)
             break
           case 'pass':
@@ -309,6 +313,7 @@ export default {
     showCard(data) {
       let next = ''
       const curUser = getDirection(data.cbCard_uid)
+      this.showAudio(data.cbCard_type)
       this._addHistoryCard(data.cbCard, curUser)
       if (curUser === 'mine') {
         next = 'right'
@@ -323,6 +328,7 @@ export default {
       let next = ''
       const curUser = getDirection(data.cbCard_uid)
       this.tip[curUser] = '要不起'
+      this.$refs.music.play('yaobuqi')
       if (curUser === 'mine') {
         next = 'right'
         setTimeout(() => {
@@ -341,11 +347,47 @@ export default {
       }
       this.$store.commit('user/setCurUser', next)
     },
+    showAudio(cardType) {
+      let audioName
+      switch (cardType) {
+        case 'three_line':
+          audioName = 'sandaiyi'
+          break
+        case 'three_line_take_one':
+          audioName = 'three_take_one'
+          break
+        case 'three_line_take_two':
+          audioName = 'three_take_two'
+          break
+        case 'bomb_card':
+          audioName = 'bomb'
+          break
+        case 'king_bomb_card':
+          audioName = 'king_bomb'
+          break
+        case 'plane_with_wing':
+          audioName = 'plane'
+          break
+        case 'double_line':
+          audioName = 'double_line'
+          break
+        case 'four_line_take_two':
+          audioName = 'four_take_two'
+          break
+
+        default:
+          break
+      }
+      if (audioName) this.$refs.music.play(audioName)
+    },
     setAlarm(curPoint, curUid, nextUid, type) {
       let next = ''
       const seatMap = this.$store.state.user.seatMap
       if (curPoint === 0) {
         this.tip[getDirection(curUid)] = type === 'call' ? '不叫' : '不抢'
+        this.$refs.music.play('fscore0')
+      } else if (curPoint === 1) {
+        this.$refs.music.play('fscore1')
       }
       if (nextUid !== '') {
         const curUser = getDirection(nextUid)

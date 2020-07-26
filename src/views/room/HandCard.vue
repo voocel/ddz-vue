@@ -126,6 +126,9 @@ export default {
       let cardsNum = poker.card2num(tmp)
       cardsNum = cardsNum.sort((a, b) => a - b)
       const cardType = poker.checkType(cardsNum)
+      console.log('检测牌型')
+      console.log(cardsNum)
+      console.log(cardType)
       if (cardType === 'bomb_card') this.showSpecial(0)
       if (!cardType) {
         this.$message({

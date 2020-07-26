@@ -4,7 +4,7 @@
       <img width="340px" src="@/assets/images/hall_logo_pic.png" alt="">
     </div>
     <div class="bottom-box">
-      <div @click="openLogin=true">
+      <div @click="onLogin">
         <img width="150px" src="@/assets/images/button/traveler.png" alt="">
       </div>
     </div>
@@ -25,15 +25,17 @@
         </div>
       </div>
     </el-dialog>
+    <music ref="music" />
   </div>
 </template>
 
 <script>
 import userLogin from './userlogin'
 import userRegister from './userRegister'
+import Music from '../room/Music'
 export default {
   name: 'Login',
-  components: { userLogin, userRegister },
+  components: { userLogin, userRegister, Music },
   data() {
     return {
       openLogin: false,
@@ -44,6 +46,10 @@ export default {
     setActiveName(val) {
       console.log(val)
       this.activeName = val
+    },
+    onLogin() {
+      this.$refs.music.play('bg_room')
+      this.openLogin = true
     }
   }
 }

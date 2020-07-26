@@ -10,13 +10,13 @@
       <div class="btn-room">
         <ul>
           <li>
-            <img class="match" width="180px" src="@/assets/images/button/match_room.png" @click="match">
+            <img class="match" width="18px" src="@/assets/images/button/match_room.png" @click="match">
           </li>
           <li>
-            <img width="180px" src="@/assets/images/button/create_room.png" @click="createVisible=true">
+            <img width="18px" src="@/assets/images/button/create_room.png" @click="createVisible=true">
           </li>
           <li>
-            <img width="180px" src="@/assets/images/button/enter_room.png" @click="enterVisible=true">
+            <img width="18px" src="@/assets/images/button/enter_room.png" @click="enterVisible=true">
           </li>
         </ul>
       </div>

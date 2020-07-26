@@ -1,24 +1,26 @@
 <template>
-  <el-form ref="loginForm" class="form" status-icon :rules="loginRules" :model="loginForm" label-width="0">
-    <el-form-item prop="username">
-      <el-input v-model="loginForm.username" size="small" auto-complete="off" placeholder="请输入用户名" @keyup.enter.native="handleLogin">
-        <i slot="prefix" class="icon-yonghu" />
-      </el-input>
-    </el-form-item>
-    <el-form-item prop="password">
-      <el-input v-model="loginForm.password" size="small" :type="passwordType" auto-complete="off" placeholder="请输入密码" @keyup.enter.native="handleLogin">
-        <i slot="suffix" class="el-icon-view el-input__icon" style="cursor: pointer" @click="showPassword" />
-        <i slot="prefix" class="icon-mima" />
-      </el-input>
-    </el-form-item>
-    <el-checkbox v-model="checked">记住账号</el-checkbox>
-    <el-form-item>
-      <el-button :loading="loading" type="primary" size="small" class="submit" @click.native.prevent="handleLogin">登录</el-button>
-    </el-form-item>
-    <div>
-      <div class="user-login-other" @click="setActiveName">注册账户</div>
-    </div>
-  </el-form>
+  <div>
+    <el-form ref="loginForm" class="form" status-icon :rules="loginRules" :model="loginForm" label-width="0">
+      <el-form-item prop="username">
+        <el-input v-model="loginForm.username" size="small" auto-complete="off" placeholder="请输入用户名" @keyup.enter.native="handleLogin">
+          <i slot="prefix" class="icon-yonghu" />
+        </el-input>
+      </el-form-item>
+      <el-form-item prop="password">
+        <el-input v-model="loginForm.password" size="small" :type="passwordType" auto-complete="off" placeholder="请输入密码" @keyup.enter.native="handleLogin">
+          <i slot="suffix" class="el-icon-view el-input__icon" style="cursor: pointer" @click="showPassword" />
+          <i slot="prefix" class="icon-mima" />
+        </el-input>
+      </el-form-item>
+      <el-checkbox v-model="checked">记住账号</el-checkbox>
+      <el-form-item>
+        <el-button :loading="loading" type="primary" size="small" class="submit" @click.native.prevent="handleLogin">登录</el-button>
+      </el-form-item>
+      <div>
+        <div class="user-login-other" @click="setActiveName">注册账户</div>
+      </div>
+    </el-form>
+  </div>
 </template>
 
 <script>

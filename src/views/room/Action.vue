@@ -25,7 +25,6 @@
 <script>
 import { mapState } from 'vuex'
 import { getDirection, getToken, getRoomNo, setRoomNo } from '@/utils/auth'
-
 export default {
   name: 'Action',
   props: {
