@@ -42,13 +42,15 @@ export default {
       activeName: '登录'
     }
   },
+  mounted() {
+    this.$refs.music.playbg('bg_room0', 'loop')
+  },
   methods: {
     setActiveName(val) {
       console.log(val)
       this.activeName = val
     },
     onLogin() {
-      this.$refs.music.play('bg_room')
       this.openLogin = true
     }
   }

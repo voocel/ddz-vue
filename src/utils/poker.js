@@ -60,10 +60,10 @@ function checkType(cards) {
     case 1:
       return 'single'
     case 2:
-      if (analyseRes.doubleCount === 1) {
-        return 'double'
-      } else if (cards[0] === 0 && cards[1] === 0) {
+      if (cards[0] === '0' && cards[1] === '0') {
         return 'king_bomb_card'
+      } else if (analyseRes.doubleCount === 1) {
+        return 'double'
       }
       return false
     case 3:

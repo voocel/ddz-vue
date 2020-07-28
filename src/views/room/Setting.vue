@@ -34,8 +34,8 @@ export default {
   },
   data() {
     return {
-      audioUrl: require('../../assets/audio/bg_room.mp3'),
-      music: 'bg_room'
+      audioUrl: require('../../assets/audio/bg_room1.mp3'),
+      music: 'bg_room1'
     }
   },
   mounted() {
@@ -60,8 +60,6 @@ export default {
       document.removeEventListener('touchstart', this.audioAutoPlay)
     },
     test() {
-      this.music = 'deal'
-      this.$refs.music.play('deal')
       // this.$refs.audio.play()
       // let cardsNum = [1,1,1,1,2,2,2,2]
       // let res = this._checkThreeLine(cardsNum,cardsNum.length)

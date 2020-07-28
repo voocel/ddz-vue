@@ -127,6 +127,7 @@ export default {
       special: false,
       isEnd: false,
       specialType: 0,
+      isCanPass: 0,
       roomNo: 0,
       coin: {
         mine: 0,
@@ -187,6 +188,9 @@ export default {
     }
     this.$store.dispatch('user/resetPlayerSeat')
   },
+  mounted() {
+    this.$refs.music.playbg('bg_room1')
+  },
   methods: {
     callPlay() {
       this.$refs.handCard.play()
@@ -218,14 +222,16 @@ export default {
             console.log('发牌了')
             this.curCard = data.player_hand_cards.reverse()
             Object.assign(this.$data.handCards, this.$options.data().handCards)
+            this.landlordCards = []
             this.$store.commit('user/setStartState', true)
+            this.$refs.music.play('deal')
             this.deal()
             break
           case 'is_can_play':
             this._addLandlordCards(data.cur_uid, data.remain_card)
             break
           case 'play':
-            console.log(data)
+            // console.log(data)
             this.showCard(data)
             break
           case 'pass':
@@ -239,6 +245,7 @@ export default {
             this.$store.commit('user/setStartState', false)
             this.$store.commit('user/resetReady')
             this.$store.commit('user/setCanPlay', false)
+            this.$refs.music.play('end_win')
             break
           default:
             break
@@ -307,13 +314,14 @@ export default {
       if (this.curCard.length > 0) {
         setTimeout(() => {
           this.deal()
-        }, 100)
+        }, 220)
       }
     },
     showCard(data) {
       let next = ''
+      this.showAudio(data.cbCard_type, data.cbCard)
       const curUser = getDirection(data.cbCard_uid)
-      this.showAudio(data.cbCard_type)
+      this.isCanPass = data.is_can_pass_card
       this._addHistoryCard(data.cbCard, curUser)
       if (curUser === 'mine') {
         next = 'right'
@@ -327,8 +335,9 @@ export default {
     showPass(data) {
       let next = ''
       const curUser = getDirection(data.cbCard_uid)
+      this.isCanPass = data.is_can_pass_card
       this.tip[curUser] = '要不起'
-      this.$refs.music.play('yaobuqi')
+      this.$refs.music.play('pass' + Math.round(Math.random() * 4))
       if (curUser === 'mine') {
         next = 'right'
         setTimeout(() => {
@@ -347,11 +356,27 @@ export default {
       }
       this.$store.commit('user/setCurUser', next)
     },
-    showAudio(cardType) {
+    showAudio(cardType, cbCard) {
       let audioName
       switch (cardType) {
+        case 'single':
+          if (cbCard[0] === '0x1') {
+            audioName = 'small_king'
+          } else if (cbCard[0] === '0x2') {
+            audioName = 'big_king'
+          } else {
+            if (this.isCanPass === 1) {
+              audioName = 'follow' + Math.round(Math.random() * 4)
+            } else {
+              audioName = 'play'
+            }
+          }
+          break
+        case 'single_line':
+          audioName = 'single_line'
+          break
         case 'three_line':
-          audioName = 'sandaiyi'
+          audioName = 'plane'
           break
         case 'three_line_take_one':
           audioName = 'three_take_one'
@@ -360,10 +385,12 @@ export default {
           audioName = 'three_take_two'
           break
         case 'bomb_card':
-          audioName = 'bomb'
+          audioName = 'bomb' + Math.round(Math.random() * 1)
+          this.$refs.music.playbg('bg_room1')
           break
         case 'king_bomb_card':
           audioName = 'king_bomb'
+          this.$refs.music.playbg('bg_room1')
           break
         case 'plane_with_wing':
           audioName = 'plane'
@@ -376,6 +403,11 @@ export default {
           break
 
         default:
+          if (this.isCanPass === 1) {
+            audioName = 'follow' + Math.round(Math.random() * 4)
+          } else {
+            audioName = 'play'
+          }
           break
       }
       if (audioName) this.$refs.music.play(audioName)
@@ -385,9 +417,9 @@ export default {
       const seatMap = this.$store.state.user.seatMap
       if (curPoint === 0) {
         this.tip[getDirection(curUid)] = type === 'call' ? '不叫' : '不抢'
-        this.$refs.music.play('fscore0')
+        this.$refs.music.play('nocall' + Math.round(Math.random() * 1))
       } else if (curPoint === 1) {
-        this.$refs.music.play('fscore1')
+        this.$refs.music.play('call')
       }
       if (nextUid !== '') {
         const curUser = getDirection(nextUid)

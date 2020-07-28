@@ -10,13 +10,13 @@
       <div class="btn-room">
         <ul>
           <li>
-            <img class="match" width="18px" src="@/assets/images/button/match_room.png" @click="match">
+            <img class="match" width="180px" src="@/assets/images/button/match_room.png" @click="match">
           </li>
           <li>
-            <img width="18px" src="@/assets/images/button/create_room.png" @click="createVisible=true">
+            <img width="180px" src="@/assets/images/button/create_room.png" @click="createVisible=true">
           </li>
           <li>
-            <img width="18px" src="@/assets/images/button/enter_room.png" @click="enterVisible=true">
+            <img width="180px" src="@/assets/images/button/enter_room.png" @click="enterVisible=true">
           </li>
         </ul>
       </div>
@@ -51,6 +51,7 @@
         <el-button type="primary" @click="create()">创 建</el-button>
       </span>
     </el-dialog>
+    <music ref="music" />
   </div>
 </template>
 
@@ -58,10 +59,11 @@
 import { getToken } from '@/utils/auth'
 import Setting from '../room/Setting'
 import { createRoom } from '@/api/user'
+import Music from '../room/Music'
 
 export default {
   name: 'Home',
-  components: { Setting },
+  components: { Setting, Music },
   data() {
     return {
       enterVisible: false,
@@ -73,6 +75,9 @@ export default {
   created() {
     console.log('回到大厅')
     this.$disconnect()
+  },
+  mounted() {
+    this.$refs.music.playbg('bg_room0', 'loop')
   },
   methods: {
     match() {

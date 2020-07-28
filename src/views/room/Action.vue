@@ -19,14 +19,17 @@
       <el-button type="success" round @click="action('rob', 1)">抢地主</el-button>
       <el-button type="success" round @click="action('rob', 0)">不抢</el-button>
     </div>
+    <music ref="music" />
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex'
 import { getDirection, getToken, getRoomNo, setRoomNo } from '@/utils/auth'
+import Music from './Music'
 export default {
   name: 'Action',
+  components: { Music },
   props: {
     direction: {
       type: String,
@@ -62,6 +65,7 @@ export default {
       const data = res.data.result
       switch (res.data.type) {
         case 'ready': {
+          // this.$refs.music.play('bg_room1')
           this.$store.commit('user/setReady', [data.uid, 1])
           break
         }
