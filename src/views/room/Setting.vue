@@ -1,6 +1,6 @@
 <template>
   <div class="setting">
-    <el-dropdown size="mini" split-button type="info">
+    <el-dropdown size="mini" split-button type="info" trigger="click">
       设置
       <el-dropdown-menu slot="dropdown">
         <el-dropdown-item @click.native="test(111)">测试1</el-dropdown-item>
@@ -38,27 +38,7 @@ export default {
       music: 'bg_room1'
     }
   },
-  mounted() {
-    // const oAudio = this.$refs.audio
-    // oAudio.onended = function() {
-    //   // 播放完毕，重新循环播放
-    //   oAudio.load()
-    //   oAudio.play()
-    // }
-    // this.audioAutoPlay()
-  },
-  // created() {
-  //   setTimeout(() => {
-  //     this.$refs.audio.play()
-  //   }, 2000)
-  //   // this.$refs.audio.play()
-  // },
   methods: {
-    audioAutoPlay() {
-      const audio = this.$refs.audio
-      audio.play()
-      document.removeEventListener('touchstart', this.audioAutoPlay)
-    },
     test() {
       // this.$refs.audio.play()
       // let cardsNum = [1,1,1,1,2,2,2,2]

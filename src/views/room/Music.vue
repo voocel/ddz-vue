@@ -9,11 +9,7 @@
 export default {
   name: 'Music',
   data() {
-    return {
-      isReady: false,
-      isPlayErrorPromptShow: false,
-      playing: false
-    }
+    return {}
   },
   computed: {
     audio() {
@@ -22,7 +18,6 @@ export default {
   },
   methods: {
     play(name) {
-      console.log(name)
       this.audio.src = require('../../assets/audio/' + name + '.mp3')
       this.audio.play()
     },

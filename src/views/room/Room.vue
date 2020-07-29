@@ -361,9 +361,9 @@ export default {
       switch (cardType) {
         case 'single':
           if (cbCard[0] === '0x1') {
-            audioName = 'small_king'
-          } else if (cbCard[0] === '0x2') {
             audioName = 'big_king'
+          } else if (cbCard[0] === '0x2') {
+            audioName = 'small_king'
           } else {
             if (this.isCanPass === 1) {
               audioName = 'follow' + Math.round(Math.random() * 4)

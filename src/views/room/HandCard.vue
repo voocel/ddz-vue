@@ -111,9 +111,6 @@ export default {
         return
       }
       this._playCard(this.handCards)
-      // if (this.handCards.length === 0) {
-      //   this.showSpecial(1)
-      // }
     },
     _playCard(obj) {
       console.log('出牌了...')
@@ -126,10 +123,12 @@ export default {
       let cardsNum = poker.card2num(tmp)
       cardsNum = cardsNum.sort((a, b) => a - b)
       const cardType = poker.checkType(cardsNum)
-      console.log('检测牌型')
-      console.log(cardsNum)
-      console.log(cardType)
-      if (cardType === 'bomb_card') this.showSpecial(0)
+      cbCard = cbCard.reverse()
+      if (cardType === 'three_line_take_one' && cardsNum[0] !== cardsNum[1]) {
+        cbCard = cbCard.reverse()
+      } else if (cardType === 'three_line_take_two' && cardsNum[1] !== cardsNum[2]) {
+        cbCard = cbCard.reverse()
+      }
       if (!cardType) {
         this.$message({
           showClose: true,
@@ -139,7 +138,6 @@ export default {
         })
         return
       }
-      cbCard = cbCard.reverse()
       const actions = {
         cmd: 'ddz/play',
         param: {
@@ -151,13 +149,6 @@ export default {
         access_token: getToken()
       }
       this.$socket.sendObj(actions)
-    },
-    showSpecial(specialType) {
-      this.specialType = specialType
-      this.special = true
-      setTimeout(() => {
-        this.special = false
-      }, 2000)
     }
   }
 }
