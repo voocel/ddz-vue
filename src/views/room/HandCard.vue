@@ -53,20 +53,12 @@ export default {
   },
   data() {
     return {
-      // handCards: [
-      //   { label: '2', type: 'diamond', checked: false },
-      //   { label: '3', type: 'diamond', checked: false },
-      //   { label: '4', type: 'diamond', checked: false },
-      //   { label: '5', type: 'diamond', checked: false },
-      //   { label: '6', type: 'diamond', checked: false },
-      //   { label: '7', type: 'diamond', checked: false },
-      //   { label: '8', type: 'diamond', checked: false }
-      // ],
-      first: false,
+      check: false,
       moveChange: false,
       specialType: 0,
       special: false,
-      down: false
+      down: false,
+      hasMove: false
     }
   },
   methods: {
@@ -77,17 +69,19 @@ export default {
         })
       }
       this.down = false
+      this.hasMove = false
     },
     mousedown(event) {
       this.moveChange = true
       this.down = true
-      this.first = !event.checked
+      this.check = !event.checked
     },
     mousemove(event) {
       if (this.moveChange) {
+        this.hasMove = true
         this.handCards.find(
           c => c.label === event.label && c.type === event.type
-        ).checked = this.first
+        ).checked = this.check
       }
     },
     mouseup() {
@@ -98,7 +92,10 @@ export default {
       this.moveChange = false
     },
     changed(item) {
-      item.checked = !item.checked
+      if (!this.hasMove) {
+        item.checked = !item.checked
+      }
+      this.hasMove = false
     },
     play() {
       if (this.handCards.filter(c => c.checked).length < 1) {
@@ -113,7 +110,6 @@ export default {
       this._playCard(this.handCards)
     },
     _playCard(obj) {
-      console.log('出牌了...')
       const tmp = []
       tmp.push(...obj.filter(c => c.checked))
       let cbCard = []
@@ -124,9 +120,9 @@ export default {
       cardsNum = cardsNum.sort((a, b) => a - b)
       const cardType = poker.checkType(cardsNum)
       cbCard = cbCard.reverse()
-      if (cardType === 'three_line_take_one' && cardsNum[0] !== cardsNum[1]) {
+      if (cardType === 'three_take_one' && cardsNum[0] !== cardsNum[1]) {
         cbCard = cbCard.reverse()
-      } else if (cardType === 'three_line_take_two' && cardsNum[1] !== cardsNum[2]) {
+      } else if (cardType === 'three_take_two' && cardsNum[1] !== cardsNum[2]) {
         cbCard = cbCard.reverse()
       }
       if (!cardType) {

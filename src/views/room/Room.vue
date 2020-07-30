@@ -240,12 +240,20 @@ export default {
           case 'end':
             console.log('本局结束')
             console.log(data)
+            data.forEach((item) => {
+              if (item.uid === getUserInfo().uid) {
+                if (item.score > 0) {
+                  this.$refs.music.play('end_win')
+                } else {
+                  this.$refs.music.play('end_lose')
+                }
+              }
+            })
             this.showSpecial(1)
             this.isEnd = true
             this.$store.commit('user/setStartState', false)
             this.$store.commit('user/resetReady')
             this.$store.commit('user/setCanPlay', false)
-            this.$refs.music.play('end_win')
             break
           default:
             break
@@ -361,9 +369,9 @@ export default {
       switch (cardType) {
         case 'single':
           if (cbCard[0] === '0x1') {
-            audioName = 'big_king'
+            audioName = 'big_joker'
           } else if (cbCard[0] === '0x2') {
-            audioName = 'small_king'
+            audioName = 'small_joker'
           } else {
             if (this.isCanPass === 1) {
               audioName = 'follow' + Math.round(Math.random() * 4)
@@ -378,18 +386,18 @@ export default {
         case 'three_line':
           audioName = 'plane'
           break
-        case 'three_line_take_one':
+        case 'three_take_one':
           audioName = 'three_take_one'
           break
-        case 'three_line_take_two':
+        case 'three_take_two':
           audioName = 'three_take_two'
           break
         case 'bomb_card':
           audioName = 'bomb' + Math.round(Math.random() * 1)
           this.$refs.music.playbg('bg_room1')
           break
-        case 'king_bomb_card':
-          audioName = 'king_bomb'
+        case 'joker_bomb':
+          audioName = 'joker_bomb'
           this.$refs.music.playbg('bg_room1')
           break
         case 'plane_with_wing':
@@ -398,7 +406,7 @@ export default {
         case 'double_line':
           audioName = 'double_line'
           break
-        case 'four_line_take_two':
+        case 'four_take_two':
           audioName = 'four_take_two'
           break
 

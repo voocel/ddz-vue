@@ -61,7 +61,7 @@ function checkType(cards) {
       return 'single'
     case 2:
       if (cards[0] === '0' && cards[1] === '0') {
-        return 'king_bomb_card'
+        return 'joker_bomb'
       } else if (analyseRes.doubleCount === 1) {
         return 'double'
       }
@@ -75,17 +75,17 @@ function checkType(cards) {
       if (analyseRes.fourCount === 1) {
         return 'bomb_card'
       } else if (analyseRes.threeCount === 1 && analyseRes.singleCount === 1) {
-        return 'three_line_take_one'
+        return 'three_take_one'
       }
       return false
     case 5:
       if (analyseRes.threeCount === 1 && analyseRes.doubleCount === 1) {
-        return 'three_line_take_two'
+        return 'three_take_two'
       }
       return false
     case 6:
       if (analyseRes.fourCount === 1 && analyseRes.singleCount === 2) {
-        return 'four_line_take_two'
+        return 'four_take_two'
       } else if (analyseRes.threeCount === 2) {
         return 'three_line'
       }

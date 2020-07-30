@@ -77,7 +77,9 @@ export default {
           break
         case '13':
           tmp = 'K'
-          // tmp = '<img src="/static/img/back.a2057e1.png">'
+          break
+        case '0':
+          tmp = '🃏'
           break
         default:
           tmp = this.value
