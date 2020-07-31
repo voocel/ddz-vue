@@ -231,7 +231,6 @@ export default {
             this._addLandlordCards(data.cur_uid, data.remain_card)
             break
           case 'play':
-            // console.log(data)
             this.showCard(data)
             break
           case 'pass':
@@ -250,10 +249,10 @@ export default {
               }
             })
             this.showSpecial(1)
-            this.isEnd = true
             this.$store.commit('user/setStartState', false)
             this.$store.commit('user/resetReady')
             this.$store.commit('user/setCanPlay', false)
+            this.settle(data)
             break
           default:
             break
@@ -261,7 +260,6 @@ export default {
       }
     },
     roomInfo(data) {
-      // console.log(data)
       this.roomNo = data.room_info.room_no
       const playerInfo = data.player_info
       if (playerInfo) {
@@ -280,6 +278,9 @@ export default {
       if (data.remain_card) {
         this.landlordCards = this.common.batchFormatCards(data.remain_card)
       }
+    },
+    settle(data) {
+      this.isEnd = true
     },
     setPlayer(data) {
       const seatMap = this.$store.state.user.seatMap
@@ -310,7 +311,6 @@ export default {
       } else {
         seatMap.mine = data.uid
         players.mine = data
-        this.meSeatno = data.seat_no
         this.coin.mine = data.coin
       }
       this.$store.commit('user/setPlayers', players)

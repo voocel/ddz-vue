@@ -97,7 +97,6 @@ export default {
           })
         }
       } else {
-        console.log('直接发送')
         this.$socket.sendObj(actions)
         this.$router.push({
           path: '/room'
