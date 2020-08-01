@@ -52,6 +52,9 @@
       </span>
     </el-dialog>
     <music ref="music" />
+    <!-- <Modal :show="show" :title="title" @hideModal="hideModal" @submit="submit">
+      <p>这里放弹窗的内容</p>
+    </Modal> -->
   </div>
 </template>
 
@@ -60,6 +63,7 @@ import { getToken } from '@/utils/auth'
 import Setting from '../room/Setting'
 import { createRoom } from '@/api/user'
 import Music from '../room/Music'
+import Modal from '@/components/Modal.vue'
 
 export default {
   name: 'Home',
@@ -78,6 +82,11 @@ export default {
   },
   mounted() {
     this.$refs.music.playbg('bg_room0', 'loop')
+    const notice = this.$create(Modal, {
+      message: '结算详情',
+      duration: -1
+    })
+    notice.show()
   },
   methods: {
     match() {
