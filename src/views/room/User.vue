@@ -1,6 +1,6 @@
 <template>
   <div class="user">
-    <div class="uinfo">
+    <div v-if="userInfo" class="uinfo">
       <div :style="styleObject">
         <div class="alarm">{{ alarmNum }}</div>
         <img width="56px" src="@/assets/images/alarm-clock.png">
@@ -21,7 +21,6 @@
 </template>
 
 <script>
-// import { getPlayers } from '@/utils/auth'
 
 export default {
   name: 'Uinfo',

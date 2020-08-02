@@ -78,11 +78,6 @@ export default {
   },
   mounted() {
     this.$refs.music.playbg('bg_room0', 'loop')
-    // const notice = this.$create(Modal, {
-    //   message: '结算详情',
-    //   duration: -1
-    // })
-    // notice.show()
   },
   methods: {
     match() {

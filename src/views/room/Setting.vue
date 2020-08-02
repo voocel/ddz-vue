@@ -8,24 +8,13 @@
         <el-dropdown-item divided @click.native="logout">{{ direction === 'hall' ? '退出登录' : '返回大厅' }}</el-dropdown-item>
       </el-dropdown-menu>
     </el-dropdown>
-    <!-- <div>
-      <audio
-        ref="audio"
-        autoplay
-        loop
-        :src="audioUrl"
-        @play="onPlay"
-      />
-    </div> -->
-    <music ref="music" :music-name="music" />
   </div>
 </template>
 
 <script>
-import Music from './Music'
 export default {
   name: 'Setting',
-  components: { Music },
+  components: { },
   props: {
     direction: {
       type: String,
@@ -33,10 +22,7 @@ export default {
     }
   },
   data() {
-    return {
-      audioUrl: require('../../assets/audio/bg_room1.mp3'),
-      music: 'bg_room1'
-    }
+    return {}
   },
   methods: {
     test() {
