@@ -8,10 +8,8 @@ import 'element-ui/lib/theme-chalk/index.css'
 import '@/permission' // permission control
 import Common from '@/utils/common.js'
 import VCI from 'vue-component-inspector'
-import create from './create.js'
 
-Vue.prototype.common = Common
-Vue.prototype.$create = create
+Vue.prototype.$common = Common
 Vue.use(ElementUI)
 Vue.config.productionTip = false
 Vue.use(VueNativeSock, 'ws://' + process.env.VUE_APP_SOCKET_URL + ':' + process.env.VUE_APP_SOCKET_PORT, {

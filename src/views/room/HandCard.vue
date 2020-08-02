@@ -114,7 +114,7 @@ export default {
       tmp.push(...obj.filter(c => c.checked))
       let cbCard = []
       tmp.forEach(h => {
-        cbCard.push(h.label + 'x' + poker.str2num(h.type, this.common.cardMap))
+        cbCard.push(h.label + 'x' + poker.str2num(h.type, this.$common.cardMap))
       })
       let cardsNum = poker.card2num(tmp)
       cardsNum = cardsNum.sort((a, b) => a - b)

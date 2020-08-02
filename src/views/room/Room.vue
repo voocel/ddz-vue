@@ -79,6 +79,7 @@
       </el-dialog>
     </div>
     <music ref="music" />
+    <settle :open="showSettle" :data="settleData" @cancel="settleCancel" />
   </div>
 </template>
 
@@ -93,6 +94,7 @@ import Setting from './Setting'
 import poker from '@/utils/poker'
 import tips from '@/utils/tips'
 import Music from './Music'
+import Settle from './Settle'
 import { getDirection, getToken, getUserInfo, setRoomNo, getRoomNo } from '@/utils/auth'
 export default {
   name: 'Room',
@@ -104,7 +106,8 @@ export default {
     Action,
     Setting,
     Fade,
-    Music
+    Music,
+    Settle
   },
   data() {
     return {
@@ -122,7 +125,9 @@ export default {
         left: [],
         right: []
       },
+      settleData: [],
       isMatching: false,
+      showSettle: true,
       landlordCards: [],
       special: false,
       isEnd: false,
@@ -203,7 +208,7 @@ export default {
           tips.reLoginTip()
           return
         } else if (res.code === 400) {
-          this.common.tip(res.message, 'warning')
+          this.$common.tip(res.message, 'warning')
           return
         }
         const data = res.data.result
@@ -269,18 +274,20 @@ export default {
         })
       }
       if (data.player_hand_cards) {
-        this.handCards['mine'] = this.common.batchFormatCards(data.player_hand_cards)
+        this.handCards['mine'] = this.$common.batchFormatCards(data.player_hand_cards)
         this.$store.commit('user/setStartState', true)
         this.$store.commit('user/setCanPlay', true)
         const curUser = getDirection(data.cur_out_card_player_seat_uid)
         this.$store.commit('user/setCurUser', curUser)
       }
       if (data.remain_card) {
-        this.landlordCards = this.common.batchFormatCards(data.remain_card)
+        this.landlordCards = this.$common.batchFormatCards(data.remain_card)
       }
     },
     settle(data) {
       this.isEnd = true
+      this.showSettle = true
+      this.settleData = data
     },
     setPlayer(data) {
       const seatMap = this.$store.state.user.seatMap
@@ -465,21 +472,21 @@ export default {
       }, 1000)
     },
     _add(ccard) {
-      this.handCards['mine'].push(this.common.formatCard(ccard))
+      this.handCards['mine'].push(this.$common.formatCard(ccard))
       // TODO 其他两家的牌处理
-      this.handCards['left'].push(this.common.formatCard(ccard))
-      this.handCards['right'].push(this.common.formatCard(ccard))
+      this.handCards['left'].push(this.$common.formatCard(ccard))
+      this.handCards['right'].push(this.$common.formatCard(ccard))
     },
     _addLandlordCards(uid, remainCards) {
       const curUser = getDirection(uid)
       // 顶部显示地主牌
-      this.landlordCards = this.common.batchFormatCards(remainCards)
+      this.landlordCards = this.$common.batchFormatCards(remainCards)
       // 给手牌加上地主牌  TODO 其他两家的牌处理
-      this.handCards[curUser] = [...this.handCards[curUser], ...this.common.batchFormatCards(remainCards)]
+      this.handCards[curUser] = [...this.handCards[curUser], ...this.$common.batchFormatCards(remainCards)]
       this.handCards['mine'] = poker.sortCrad(this.handCards['mine'])
     },
     _addHistoryCard(cbCard, type) {
-      this.outCards[type] = this.common.batchFormatCards(cbCard)
+      this.outCards[type] = this.$common.batchFormatCards(cbCard)
       // 同时从手牌删除
       if (type === 'mine') {
         this.outCards['mine'].forEach(h => {
@@ -502,6 +509,9 @@ export default {
       setTimeout(() => {
         this.special = false
       }, 2000)
+    },
+    settleCancel() {
+      this.showSettle = false
     }
   }
 }

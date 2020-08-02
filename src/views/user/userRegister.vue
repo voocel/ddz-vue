@@ -73,7 +73,7 @@ export default {
       this.$refs.registerForm.validate(valid => {
         if (valid) {
           this.$store.dispatch('user/register', this.registerForm).then(res => {
-            this.common.tip('注册成功!')
+            this.$common.tip('注册成功!')
             this.setActiveName()
           })
         }

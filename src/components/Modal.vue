@@ -1,15 +1,14 @@
 <template>
-  <div v-show="show" class="modal-bg" @mousemove="modalMove" @mouseup="cancelMove">
+  <div v-show="open" class="modal-bg" @mousemove="modalMove" @mouseup="cancelMove">
     <div class="modal-container">
       <div class="modal-header" @mousedown="start">
-        结算
+        <slot name="header" />
       </div>
       <div class="modal-main">
-        {{ message }}
         <slot />
       </div>
       <div class="modal-footer">
-        <el-button round @click="hide">取消</el-button>
+        <img width="120px" src="@/assets/images/button/next.png" @click="hide">
       </div>
     </div>
   </div>
@@ -19,18 +18,13 @@
 export default {
   name: 'Modal',
   props: {
-    message: {
-      type: String,
-      default: ''
-    },
-    duration: {
-      type: Number,
-      default: -1
+    open: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
     return {
-      isShow: false,
       x: 0,
       y: 0,
       node: null,
@@ -43,16 +37,8 @@ export default {
     })
   },
   methods: {
-    show() {
-      this.isShow = true
-      if (this.duration !== -1) {
-        setTimeout(this.hide, this.duration)
-      }
-    },
     hide() {
-      this.isShow = false
-      // 调用组件实例提供的方法销毁组件实例
-      this.remove()
+      this.$emit('cancel')
     },
     start(e) {
       this.x = e.clientX - this.node.offsetLeft
@@ -89,7 +75,7 @@ export default {
   user-select:none;
   .modal-container {
     width: 600px;
-    background: #fff;
+    background: #5d5d5e;
     border-radius: 10px;
     overflow: hidden;
     position: fixed;
@@ -98,8 +84,9 @@ export default {
     transform: translate(-50%,-50%);
     .modal-header {
       height: 56px;
-      background: #5d5d5e;
       color: #fff;
+      font-size: 20px;
+      background: linear-gradient(rgb(255,237,188,.5), rgb(237,66,100,.5));
       display: flex;
       align-items: center;
       justify-content: center;
@@ -114,6 +101,9 @@ export default {
       justify-content: center;
       height: 57px;
       border-top: 1px solid #ddd;
+      img {
+        cursor: pointer;
+      }
     }
   }
 }
