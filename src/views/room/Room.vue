@@ -127,7 +127,7 @@ export default {
       },
       settleData: [],
       isMatching: false,
-      showSettle: true,
+      showSettle: false,
       landlordCards: [],
       special: false,
       isEnd: false,
