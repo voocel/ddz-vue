@@ -18,6 +18,7 @@
       @mousemove.native.stop="mousemove(item)"
       @mouseup.native.stop="mouseup(item)"
       @mousedown.native.stop="mousedown(item)"
+      @mouseout.native.stop="mouseout()"
       @click.native="changed(item)"
     />
   </div>
@@ -90,6 +91,9 @@ export default {
     },
     mouseleave() {
       this.moveChange = false
+    },
+    mouseout() {
+      this.hasMove = false
     },
     changed(item) {
       if (!this.hasMove) {
