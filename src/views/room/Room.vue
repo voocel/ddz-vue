@@ -483,7 +483,7 @@ export default {
       this.landlordCards = this.$common.batchFormatCards(remainCards)
       // 给手牌加上地主牌  TODO 其他两家的牌处理
       this.handCards[curUser] = [...this.handCards[curUser], ...this.$common.batchFormatCards(remainCards)]
-      this.handCards['mine'] = poker.sortCrad(this.handCards['mine'])
+      this.handCards['mine'] = poker.sortCrad(this.handCards['mine'], 'desc')
     },
     _addHistoryCard(cbCard, type) {
       this.outCards[type] = this.$common.batchFormatCards(cbCard)

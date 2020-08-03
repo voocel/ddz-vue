@@ -106,18 +106,18 @@ function checkType(cards) {
   }
 }
 
-function sortCrad(cards) {
+function sortCrad(cards, sortType = 'asc', type = 'obj') {
   return cards.sort((a, b) => {
     const arr = ['3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '1', '2', '0']
-    const x = arr.findIndex(n => n === a.label)
-    const y = arr.findIndex(n => n === b.label)
-    if (x < y) {
-      return 1
-    } else if (x > y) {
-      return -1
+    let x, y
+    if (type === 'num') {
+      x = arr.indexOf(a)
+      y = arr.indexOf(b)
     } else {
-      return 0
+      x = arr.findIndex(n => n === a.label)
+      y = arr.findIndex(n => n === b.label)
     }
+    return sortType === 'asc' ? x - y : y - x
   })
 }
 
@@ -164,7 +164,6 @@ function _checkThreeLine(cards, len) {
   const tmp = []
   tmp.push(...new Set(cards))
   if (len === tmp.length * 3) {
-    console.log(tmp)
     return _checkSingleLine(tmp, tmp.length)
   }
   return false

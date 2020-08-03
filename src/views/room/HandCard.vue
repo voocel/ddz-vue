@@ -117,7 +117,7 @@ export default {
         cbCard.push(h.label + 'x' + poker.str2num(h.type, this.$common.cardMap))
       })
       let cardsNum = poker.card2num(tmp)
-      cardsNum = cardsNum.sort((a, b) => a - b)
+      cardsNum = poker.sortCrad(cardsNum, 'asc', 'num')
       const cardType = poker.checkType(cardsNum)
       cbCard = cbCard.reverse()
       if (cardType === 'three_take_one' && cardsNum[0] !== cardsNum[1]) {
@@ -153,20 +153,26 @@ export default {
 <style lang="scss" scoped>
 .rotate-left {
   width: 100%;
-  display: flex;
   margin-top: 150px;
   transform: rotate(90deg);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 .rotate-right {
   width: 100%;
-  display: flex;
   margin-top: 150px;
   transform: rotate(90deg);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 .rotate-mine {
   width: 100%;
-  display: flex;
   margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 .small:not(:first-child) {
   margin-left: -35px;
