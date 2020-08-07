@@ -51,6 +51,7 @@ export default {
       this.activeName = val
     },
     onLogin() {
+      this.$refs.music.playbg('click')
       this.openLogin = true
     }
   }

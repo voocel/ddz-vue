@@ -81,6 +81,7 @@ export default {
   },
   methods: {
     match() {
+      this.$refs.music.playbg('click')
       const actions = {
         cmd: 'ddz/match',
         param: {
@@ -104,6 +105,7 @@ export default {
       }
     },
     create() {
+      this.$refs.music.playbg('click')
       createRoom({ game_number: this.gameNumber }).then(res => {
         this.createVisible = false
         const actions = {
@@ -123,6 +125,7 @@ export default {
       })
     },
     enter() {
+      this.$refs.music.playbg('click')
       const actions = {
         cmd: 'ddz/enterRoom',
         param: {

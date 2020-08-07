@@ -21,6 +21,7 @@
       @mouseout.native.stop="mouseout()"
       @click.native="changed(item)"
     />
+    <music ref="music" />
   </div>
 </template>
 
@@ -28,11 +29,12 @@
 import Card from './Card'
 import clickoutside from '@/directive/clickoutside'
 import poker from '@/utils/poker'
+import Music from './Music'
 import { getToken, getRoomNo } from '@/utils/auth'
 
 export default {
   name: 'Home',
-  components: { Card },
+  components: { Card, Music },
   directives: { clickoutside },
   props: {
     direction: {
@@ -88,6 +90,7 @@ export default {
     mouseup() {
       this.down = false
       this.moveChange = false
+      this.$refs.music.play('select')
     },
     mouseleave() {
       this.moveChange = false
