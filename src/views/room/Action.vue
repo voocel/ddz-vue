@@ -1,8 +1,7 @@
 <template>
   <div class="action">
     <div v-show="!startState">
-      <!-- <img v-if="!isreadyMe" width="100px" src="@/assets/images/button/start.png" @click="action('ready')">
-      <img v-if="!isreadyMe" width="100px" src="@/assets/images/button/start.png" @click="action('ready')"> -->
+      <!-- <img v-if="!isreadyMe" width="100px" src="@/assets/images/button/start.png" @click="action('ready')"> -->
       <el-button v-if="isEnd" type="warning" round @click="action('changeTable', 0)">换桌</el-button>
       <el-button v-if="!isreadyMe" type="success" round @click="action('ready', 1)">准备</el-button>
     </div>

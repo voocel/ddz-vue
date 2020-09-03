@@ -215,7 +215,7 @@ export default {
         switch (res.data.type) {
           case 'match': {
             this.isMatching = true
-            this.isEnd = false
+            this.initState()
             break
           }
           case 'room_info':
@@ -288,6 +288,13 @@ export default {
       this.isEnd = true
       this.showSettle = true
       this.settleData = data
+    },
+    initState() {
+      this.isEnd = false
+      this.isCanPass = 0
+      this.landlordCards = []
+      Object.assign(this.$data.handCards, this.$options.data().handCards)
+      Object.assign(this.$data.outCards, this.$options.data().outCards)
     },
     setPlayer(data) {
       const seatMap = this.$store.state.user.seatMap

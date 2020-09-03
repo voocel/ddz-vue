@@ -36,4 +36,11 @@ const router = new VueRouter({
   routes
 })
 
+/* 重写路由的push方法 */
+const routerPush = VueRouter.prototype.push
+VueRouter.prototype.push = function push(location, onResolve, onReject) {
+  if (onResolve || onReject) return routerPush.call(this, location, onResolve, onReject)
+  return routerPush.call(this, location).catch(error => error)
+}
+
 export default router
