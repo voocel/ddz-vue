@@ -1,11 +1,11 @@
 <template>
   <div class="user">
     <div v-if="userInfo" class="uinfo">
-      <div :style="styleObject">
+      <div v-if="startState" :style="alarmStyle">
         <div class="alarm">{{ alarmNum }}</div>
         <img width="56px" src="@/assets/images/alarm-clock.png">
       </div>
-      <div v-if="!startState" class="ready">
+      <div v-else :style="readyStyle">
         <img v-if="isready" width="80px" src="@/assets/images/button/readied.png">
       </div>
       <div class="header-img">
@@ -49,8 +49,14 @@ export default {
     }
   },
   computed: {
-    styleObject() {
+    alarmStyle() {
       if (this.alarmNum > 0) {
+        return
+      }
+      return 'visibility: hidden'
+    },
+    readyStyle() {
+      if (!this.startState) {
         return
       }
       return 'visibility: hidden'
@@ -91,6 +97,7 @@ export default {
   display:flex;
   justify-content:center;
   align-items: center;
+  margin-top: 100px;
   .uinfo {
     .nickname {
       padding-bottom: 5px;
@@ -124,10 +131,6 @@ export default {
       }
     }
   }
-}
-.ready {
-  padding-left: 0px;
-  height: 50px;
 }
 .alarm {
   position: relative;

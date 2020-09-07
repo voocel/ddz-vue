@@ -160,7 +160,7 @@ export default {
 <style lang="scss" scoped>
 .rotate-left {
   width: 100%;
-  margin-top: 150px;
+  margin-top: 200px;
   transform: rotate(90deg);
   display: flex;
   justify-content: center;
@@ -168,7 +168,7 @@ export default {
 }
 .rotate-right {
   width: 100%;
-  margin-top: 150px;
+  margin-top: 200px;
   transform: rotate(90deg);
   display: flex;
   justify-content: center;

@@ -216,6 +216,7 @@ export default {
           case 'match': {
             this.isMatching = true
             this.initState()
+            this.$store.dispatch('user/resetPlayerSeat')
             break
           }
           case 'room_info':
@@ -226,8 +227,7 @@ export default {
           case 'deal':
             console.log('发牌了')
             this.curCard = data.player_hand_cards.reverse()
-            Object.assign(this.$data.handCards, this.$options.data().handCards)
-            this.landlordCards = []
+            this.initState()
             this.$store.commit('user/setStartState', true)
             this.$refs.music.play('deal')
             this.deal()
