@@ -320,27 +320,6 @@ export default {
           players.left = data
           this.coin.left = data.coin
         }
-        // if (Object.prototype.hasOwnProperty.call(seatMap, 'mine')) {
-        //   if (Object.prototype.hasOwnProperty.call(seatMap, 'right')) {
-        //     seatMap.left = data.uid
-        //     players.left = data
-        //     this.coin.left = data.coin
-        //   } else {
-        //     seatMap.right = data.uid
-        //     players.right = data
-        //     this.coin.right = data.coin
-        //   }
-        // } else {
-        //   if (Object.prototype.hasOwnProperty.call(seatMap, 'right')) {
-        //     seatMap.left = data.uid
-        //     players.left = data
-        //     this.coin.left = data.coin
-        //   } else {
-        //     seatMap.right = data.uid
-        //     players.right = data
-        //     this.coin.right = data.coin
-        //   }
-        // }
       } else {
         seatMap.mine = data.uid
         players.mine = data
