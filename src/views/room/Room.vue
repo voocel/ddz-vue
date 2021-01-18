@@ -274,7 +274,6 @@ export default {
             this.mySeatno = item.seat_no
           }
         })
-        console.log(this.mySeatno)
         playerInfo.forEach((item) => {
           this.setPlayer(item)
           this.$store.commit('user/setReady', [item['uid'], item['is_ready']])
