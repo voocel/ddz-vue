@@ -134,6 +134,7 @@ export default {
       specialType: 0,
       isCanPass: 0,
       roomNo: 0,
+      mySeatno: null,
       coin: {
         mine: 0,
         right: 0,
@@ -267,7 +268,15 @@ export default {
     roomInfo(data) {
       this.roomNo = data.room_info.room_no
       const playerInfo = data.player_info
-      if (playerInfo) {
+      if (playerInfo && playerInfo.length === 3) {
+        playerInfo.forEach((item) => {
+          console.log(item.uid)
+          console.log(getUserInfo().uid)
+          if (item.uid === getUserInfo().uid) {
+            this.mySeatno = item.seat_no
+          }
+        })
+        console.log(this.mySeatno)
         playerInfo.forEach((item) => {
           this.setPlayer(item)
           this.$store.commit('user/setReady', [item['uid'], item['is_ready']])
@@ -299,29 +308,41 @@ export default {
     setPlayer(data) {
       const seatMap = this.$store.state.user.seatMap
       const players = this.$store.state.user.players
-
+      let myNextSeatno = 0
+      if (this.mySeatno) {
+        myNextSeatno = this.mySeatno + 1 > 3 ? 1 : this.mySeatno + 1
+      }
       if (data.uid !== getUserInfo().uid) {
-        if (Object.prototype.hasOwnProperty.call(seatMap, 'mine')) {
-          if (Object.prototype.hasOwnProperty.call(seatMap, 'right')) {
-            seatMap.left = data.uid
-            players.left = data
-            this.coin.left = data.coin
-          } else {
-            seatMap.right = data.uid
-            players.right = data
-            this.coin.right = data.coin
-          }
+        if (myNextSeatno === data.seat_no) {
+          seatMap.right = data.uid
+          players.right = data
+          this.coin.right = data.coin
         } else {
-          if (Object.prototype.hasOwnProperty.call(seatMap, 'right')) {
-            seatMap.left = data.uid
-            players.left = data
-            this.coin.left = data.coin
-          } else {
-            seatMap.right = data.uid
-            players.right = data
-            this.coin.right = data.coin
-          }
+          seatMap.left = data.uid
+          players.left = data
+          this.coin.left = data.coin
         }
+        // if (Object.prototype.hasOwnProperty.call(seatMap, 'mine')) {
+        //   if (Object.prototype.hasOwnProperty.call(seatMap, 'right')) {
+        //     seatMap.left = data.uid
+        //     players.left = data
+        //     this.coin.left = data.coin
+        //   } else {
+        //     seatMap.right = data.uid
+        //     players.right = data
+        //     this.coin.right = data.coin
+        //   }
+        // } else {
+        //   if (Object.prototype.hasOwnProperty.call(seatMap, 'right')) {
+        //     seatMap.left = data.uid
+        //     players.left = data
+        //     this.coin.left = data.coin
+        //   } else {
+        //     seatMap.right = data.uid
+        //     players.right = data
+        //     this.coin.right = data.coin
+        //   }
+        // }
       } else {
         seatMap.mine = data.uid
         players.mine = data
