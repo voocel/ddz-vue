@@ -270,8 +270,6 @@ export default {
       const playerInfo = data.player_info
       if (playerInfo && playerInfo.length === 3) {
         playerInfo.forEach((item) => {
-          console.log(item.uid)
-          console.log(getUserInfo().uid)
           if (item.uid === getUserInfo().uid) {
             this.mySeatno = item.seat_no
           }
